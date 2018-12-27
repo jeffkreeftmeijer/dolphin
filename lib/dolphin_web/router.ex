@@ -2,7 +2,10 @@ defmodule DolphinWeb.Router do
   use DolphinWeb, :router
 
   pipeline :browser do
-    plug BasicAuth, use_config: {:dolphin, :basic_auth}
+    unless Mix.env() == :test do
+      plug BasicAuth, use_config: {:dolphin, :basic_auth}
+    end
+
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
