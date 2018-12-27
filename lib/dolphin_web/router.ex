@@ -2,6 +2,7 @@ defmodule DolphinWeb.Router do
   use DolphinWeb, :router
 
   pipeline :browser do
+    plug BasicAuth, use_config: {:dolphin, :basic_auth}
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash

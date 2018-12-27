@@ -14,6 +14,10 @@ config :dolphin, DolphinWeb.Endpoint,
   render_errors: [view: DolphinWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Dolphin.PubSub, adapter: Phoenix.PubSub.PG2]
 
+config :dolphin, :basic_auth,
+  username: System.get_env("BASIC_AUTH_USERNAME"),
+  password: System.get_env("BASIC_AUTH_PASSWORD")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
