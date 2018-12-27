@@ -18,6 +18,11 @@ config :dolphin, :basic_auth,
   username: System.get_env("BASIC_AUTH_USERNAME"),
   password: System.get_env("BASIC_AUTH_PASSWORD")
 
+config :dolphin, :github_credentials,
+  username: System.get_env("GITHUB_USERNAME"),
+  repository: System.get_env("GITHUB_REPOSITORY"),
+  access_token: System.get_env("GITHUB_ACCESS_TOKEN")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
