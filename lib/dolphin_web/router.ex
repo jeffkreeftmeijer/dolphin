@@ -20,7 +20,8 @@ defmodule DolphinWeb.Router do
   scope "/", DolphinWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", UpdateController, :new
+    post "/", UpdateController, :create
   end
 
   # Other scopes may use custom stacks.

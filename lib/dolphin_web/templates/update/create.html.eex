@@ -1,0 +1,5 @@
+<h1>New Update</h1>
+
+<p>Update posted succesfully.</p>
+
+<span><%= link "Back", to: Routes.update_path(@conn, :new) %></span>
