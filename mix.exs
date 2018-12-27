@@ -40,7 +40,8 @@ defmodule Dolphin.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:basic_auth, "~> 2.2.2"},
-      {:stream_data, "~> 0.1", only: :test}
+      {:stream_data, "~> 0.1", only: :test},
+      {:tentacat, "~> 1.0"}
     ]
   end
 end
