@@ -23,6 +23,14 @@ config :dolphin, :github_credentials,
   repository: System.get_env("GITHUB_REPOSITORY"),
   access_token: System.get_env("GITHUB_ACCESS_TOKEN")
 
+config :dolphin, :twitter_credentials, username: System.get_env("TWITTER_USERNAME")
+
+config :extwitter, :oauth,
+  consumer_key: System.get_env("TWITTER_CONSUMER_KEY"),
+  consumer_secret: System.get_env("TWITTER_CONSUMER_SECRET"),
+  access_token: System.get_env("TWITTER_ACCESS_TOKEN"),
+  access_token_secret: System.get_env("TWITTER_TOKEN_SECRET")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
