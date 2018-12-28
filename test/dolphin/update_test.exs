@@ -27,9 +27,14 @@ defmodule Dolphin.UpdateTest do
       assert url =~ ~r/https:\/\/twitter.com\/\w+\/status\/12119/
     end
 
+    test "posts the update to mastodon", %{mastodon: [url]} do
+      assert url =~ ~r/https:\/\/mastodon.social\/@\w+\/12119/
+    end
+
     test "adds the twitter URL to the github update" do
       [file] = FakeGithub.Contents.files()
       assert file =~ ~r/twitter: \["https:\/\/twitter.com\/\w+\/status\/12119"\]/
+      assert file =~ ~r/mastodon: \["https:\/\/mastodon.social\/@\w+\/12119"\]/
     end
   end
 
