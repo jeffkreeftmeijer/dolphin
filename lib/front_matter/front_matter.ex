@@ -28,12 +28,32 @@ defmodule FrontMatter do
         Encodes content without metadata into a document without front matter.
         """
       }
+
+      iex> FrontMatter.encode(
+      ...>   "Does not include empty metadata keys in the front matter.",
+      ...>   %{date: nil}
+      ...> )
+      {
+        :ok,
+        """
+        Does not include empty metadata keys in the front matter.
+        """
+      }
   '''
-  def encode(content, metadata) when metadata == %{} do
+  def encode(content, metadata) do
+    filtered_metadata =
+      metadata
+      |> Enum.reject(fn {_key, value} -> value == nil end)
+      |> Enum.into(%{})
+
+    do_encode(content, filtered_metadata)
+  end
+
+  defp do_encode(content, metadata) when metadata == %{} do
     {:ok, content <> "\n"}
   end
 
-  def encode(content, metadata) do
+  defp do_encode(content, metadata) do
     front_matter =
       metadata
       |> Enum.map(fn {key, value} -> to_string(key) <> ": " <> value end)
@@ -54,5 +74,4 @@ defmodule FrontMatter do
     {:ok, document} = encode(content, metadata)
     document
   end
-
 end
