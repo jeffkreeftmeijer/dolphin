@@ -16,5 +16,13 @@ defmodule Dolphin.Update.TwitterTest do
                  in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
                })
     end
+
+    test "replaces mentions with Twitter-style ones" do
+      assert %Dolphin.Update.Twitter{content: "@tbdr More convoluted than that, actually. 😅"} =
+               Dolphin.Update.Twitter.from_update(%Dolphin.Update{
+                 text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
+                 in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
+               })
+    end
   end
 end
