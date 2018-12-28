@@ -4,6 +4,15 @@ defmodule Dolphin.UpdateTest do
   doctest Dolphin.Update
   alias Dolphin.Update
 
+  describe "post/1" do
+    test "posts the update to github" do
+      {:ok, [url]} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+
+      assert url =~
+               ~r/https:\/\/github.com\/\w+\/\w+\/blob\/master\/2018-12-27-man-ed-currentstatus.md/
+    end
+  end
+
   describe "filename/1" do
     property "starts with today's date" do
       check all update <- update() do

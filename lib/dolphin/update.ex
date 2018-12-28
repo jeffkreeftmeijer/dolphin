@@ -1,7 +1,16 @@
 defmodule Dolphin.Update do
   defstruct text: ""
+  alias Dolphin.Github
 
   @date Application.get_env(:dolphin, :date, Date)
+
+  def post(%Dolphin.Update{} = update) do
+    {201, %{"content" => %{"_links" => %{"html" => link}}}, _} = Github.post(update)
+
+    {:ok, [link]}
+  end
+
+  def post(%{"text" => text}), do: post(%Dolphin.Update{text: text})
 
   @doc ~S"""
   Generates a file name based on today's date and the update's text.
