@@ -10,3 +10,4 @@ config :dolphin, DolphinWeb.Endpoint,
 config :logger, level: :warn
 
 config :dolphin, date: FakeDate
+config :dolphin, github: FakeGithub
