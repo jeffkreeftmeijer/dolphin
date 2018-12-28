@@ -10,7 +10,18 @@ defmodule Dolphin.Update do
     {:ok, [link]}
   end
 
-  def post(%{"text" => text}), do: post(%Dolphin.Update{text: text})
+  def post(update) do
+    update
+    |> from_params
+    |> post
+  end
+
+  defp from_params(update) do
+    update
+    |> Enum.reduce(%Dolphin.Update{}, fn {key, value}, acc ->
+      Map.put(acc, String.to_existing_atom(key), value)
+    end)
+  end
 
   @doc ~S"""
   Generates a file name based on today's date and the update's text.
