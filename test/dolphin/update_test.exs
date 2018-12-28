@@ -21,7 +21,7 @@ defmodule Dolphin.UpdateTest do
       end
     end
 
-    property "only includes alphanumeric characters and dashes" do
+    property "only includes lowercase alphanumeric characters and dashes" do
       check all update <- update() do
         assert update
                |> Update.filename()
@@ -29,8 +29,7 @@ defmodule Dolphin.UpdateTest do
                |> remove(~r/\.md$/)
                |> String.to_charlist()
                |> Enum.all?(fn character ->
-                 character == ?- or character in ?a..?z or character in ?A..?Z or
-                   character in ?0..?9
+                 character == ?- or character in ?a..?z or character in ?0..?9
                end)
       end
     end

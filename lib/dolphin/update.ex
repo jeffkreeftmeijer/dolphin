@@ -17,6 +17,7 @@ defmodule Dolphin.Update do
   def filename(%Dolphin.Update{text: text}) do
     (@date.to_iso8601(@date.utc_today) <> "-" <> text)
     |> Dolphin.Utils.filter_characters([' ', '\n', '-', '@', ?a..?z, ?A..?Z, ?0..?9])
+    |> String.downcase()
     |> String.replace(~r/@[\w\.]+/, "")
     |> String.split(~r/\W+/, trim: true)
     |> Enum.take(8)
