@@ -20,6 +20,13 @@ defmodule Dolphin.Update.Twitter do
     %{acc | content: replace_mentions(text)}
   end
 
+  def post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
+      when in_reply_to_id != nil do
+    %{id: id} = @twitter.update(content, in_reply_to_status_id: in_reply_to_id)
+
+    {:ok, ["https://twitter.com/#{@username}/status/#{id}"]}
+  end
+
   def post(%Dolphin.Update.Twitter{content: content}) do
     %{id: id} = @twitter.update(content)
 

@@ -41,7 +41,16 @@ defmodule Dolphin.Update.TwitterTest do
       expected_url = "https://twitter.com/#{@username}/status/12119"
 
       assert Dolphin.Update.Twitter.post(update) == {:ok, [expected_url]}
-      assert FakeTwitter.updates() == ["$ man ed\n\n#currentstatus"]
+      assert FakeTwitter.updates() == [{"$ man ed\n\n#currentstatus", []}]
+    end
+
+    test "posts a reply to Twitter" do
+      Dolphin.Update.Twitter.post(%Dolphin.Update{
+        text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
+        in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
+      })
+
+      assert [{_, [in_reply_to_status_id: "1075477062360670208"]}] = FakeTwitter.updates()
     end
   end
 end

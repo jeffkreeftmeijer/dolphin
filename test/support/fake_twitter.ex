@@ -7,18 +7,14 @@ defmodule FakeTwitter do
     Agent.get(__MODULE__, &Map.get(&1, :updates))
   end
 
-  def update(status) do
+  def update(status, options \\ []) do
     if Process.whereis(__MODULE__) do
       Agent.update(__MODULE__, fn %{updates: updates} = state ->
-        %{state | updates: [status | updates]}
+        %{state | updates: [{status, options} | updates]}
       end)
     end
 
     %{id: id(status), text: status}
-  end
-
-  def update(status, in_reply_to_status_id: in_reply_to_id) do
-    %{id: id(status), text: status, in_reply_to_status_id: in_reply_to_id}
   end
 
   defp id(status) do
