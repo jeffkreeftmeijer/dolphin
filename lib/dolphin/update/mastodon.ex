@@ -27,4 +27,23 @@ defmodule Dolphin.Update.Mastodon do
   defp from_update(%Update{text: text}, acc) do
     %{acc | content: text}
   end
+
+  def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
+      when is_binary(in_reply_to_id) do
+    %{url: url} = @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+
+    {:ok, [url]}
+  end
+
+  def post(%Dolphin.Update.Mastodon{content: content}) do
+    %{url: url} = @mastodon.create_status(@conn, content)
+
+    {:ok, [url]}
+  end
+
+  def post(%Update{} = update) do
+    update
+    |> from_update
+    |> post
+  end
 end
