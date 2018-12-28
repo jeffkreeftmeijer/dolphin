@@ -1,6 +1,6 @@
 defmodule Dolphin.Update do
   defstruct in_reply_to: nil, text: ""
-  alias Dolphin.Github
+  alias Dolphin.Update.Github
 
   @date Application.get_env(:dolphin, :date, Date)
 

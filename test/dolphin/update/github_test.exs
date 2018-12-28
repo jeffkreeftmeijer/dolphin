@@ -1,6 +1,6 @@
-defmodule Dolphin.GithubTest do
+defmodule Dolphin.Update.GithubTest do
   use ExUnit.Case, async: true
-  doctest Dolphin.Github
+  doctest Dolphin.Update.Github
 
   @credentials Application.get_env(:dolphin, :github_credentials)
   @username @credentials[:username]
@@ -13,7 +13,7 @@ defmodule Dolphin.GithubTest do
 
   describe "post/1" do
     test "posts a file to a Github repository" do
-      response = Dolphin.Github.post(%Dolphin.Update{text: "$ man ed\n\n#currentstatus"})
+      response = Dolphin.Update.Github.post(%Dolphin.Update{text: "$ man ed\n\n#currentstatus"})
 
       assert {201,
               %{
@@ -32,7 +32,7 @@ defmodule Dolphin.GithubTest do
     end
 
     test "posts a reply to a Github repository" do
-      Dolphin.Github.post(%Dolphin.Update{
+      Dolphin.Update.Github.post(%Dolphin.Update{
         text:
         "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
         in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"

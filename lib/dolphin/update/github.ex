@@ -1,4 +1,4 @@
-defmodule Dolphin.Github do
+defmodule Dolphin.Update.Github do
   alias Dolphin.Update
 
   @github Application.get_env(:dolphin, :github, Tentacat)
