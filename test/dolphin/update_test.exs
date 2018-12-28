@@ -4,6 +4,14 @@ defmodule Dolphin.UpdateTest do
   doctest Dolphin.Update
   alias Dolphin.Update
 
+  describe "from_params/1" do
+    test "creates an update from form parameters" do
+      assert Update.from_params(%{"text" => "$ man ed\n\n#currentstatus"}) == %Update{
+               text: "$ man ed\n\n#currentstatus"
+             }
+    end
+  end
+
   describe "post/1" do
     test "posts the update to github" do
       {:ok, [url]} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})

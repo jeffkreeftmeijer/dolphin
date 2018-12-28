@@ -4,21 +4,15 @@ defmodule Dolphin.Update do
 
   @date Application.get_env(:dolphin, :date, Date)
 
-  def post(%Dolphin.Update{} = update) do
-    Github.post(update)
-  end
-
-  def post(update) do
-    update
-    |> from_params
-    |> post
-  end
-
-  defp from_params(update) do
+  def from_params(update) do
     update
     |> Enum.reduce(%Dolphin.Update{}, fn {key, value}, acc ->
       Map.put(acc, String.to_existing_atom(key), value)
     end)
+  end
+
+  def post(%Dolphin.Update{} = update) do
+    Github.post(update)
   end
 
   @doc ~S"""
