@@ -42,7 +42,8 @@ defmodule Dolphin.MixProject do
       {:basic_auth, "~> 2.2.2"},
       {:stream_data, "~> 0.1", only: :test},
       {:tentacat, "~> 1.0"},
-      {:extwitter, "~> 0.9"}
+      {:extwitter, "~> 0.9"},
+      {:hunter, "~> 0.4"}
     ]
   end
 end

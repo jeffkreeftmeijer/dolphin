@@ -1,6 +1,6 @@
 defmodule Dolphin.Update do
-  defstruct [:in_reply_to, :text, :twitter]
-  alias Dolphin.Update.{Github, Twitter}
+  defstruct [:in_reply_to, :text, :twitter, :mastodon]
+  alias Dolphin.Update.{Github, Twitter, Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
 
@@ -13,10 +13,12 @@ defmodule Dolphin.Update do
 
   def post(%Dolphin.Update{} = update) do
     {:ok, twitter_links} = Twitter.post(update)
+    {:ok, mastodon_links} = Mastodon.post(update)
 
-    {:ok, github_links} = Github.post(%{update | twitter: twitter_links})
+    {:ok, github_links} =
+      Github.post(%{update | twitter: twitter_links, mastodon: mastodon_links})
 
-    {:ok, %{github: github_links, twitter: twitter_links}}
+    {:ok, %{github: github_links, twitter: twitter_links, mastodon: mastodon_links}}
   end
 
   @doc ~S"""
@@ -50,13 +52,14 @@ defmodule Dolphin.Update do
       ...>   %Dolphin.Update{
       ...>     text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
       ...>     in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208",
-      ...>     twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]
+      ...>     twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"],
+      ...>     mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"]
       ...>   }
       ...> )
-      %{in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208", twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]}
+      %{in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208", twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"], mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"]}
 
   """
   def metadata(update) do
-    Map.take(update, [:in_reply_to, :twitter])
+    Map.take(update, [:in_reply_to, :twitter, :mastodon])
   end
 end
