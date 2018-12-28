@@ -1,0 +1,17 @@
+<h1>New Update</h1>
+<h2>Twitter</h2>
+<pre><%= @twitter.content %></pre>
+<h2>Mastodon</h2>
+<pre><%= @mastodon.content %></pre>
+<h2>Github</h2>
+<pre><%= @github.content %></pre>
+
+<%= form_for @conn, Routes.update_path(@conn, :create), [as: :update], fn f -> %>
+  <%= label f, :in_reply_to %>
+  <%= text_input f, :in_reply_to %>
+
+  <%= label f, :text %>
+  <%= textarea f, :text %>
+
+  <%= submit "Post!" %>
+<% end %>

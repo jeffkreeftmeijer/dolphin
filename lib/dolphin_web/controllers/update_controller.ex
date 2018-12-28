@@ -6,6 +6,16 @@ defmodule DolphinWeb.UpdateController do
     render(conn, "new.html")
   end
 
+  def preview(conn, %{"update" => update_params}) do
+    update = Dolphin.Update.from_params(update_params)
+
+    github = Dolphin.Update.Github.from_update(update)
+    twitter = Dolphin.Update.Twitter.from_update(update)
+    mastodon = Dolphin.Update.Mastodon.from_update(update)
+
+    render(conn, "preview.html", github: github, twitter: twitter, mastodon: mastodon)
+  end
+
   def create(conn, %{"update" => update_params}) do
     {:ok, links} =
       update_params

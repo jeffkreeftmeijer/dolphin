@@ -8,6 +8,17 @@ defmodule DolphinWeb.UpdateControllerTest do
     end
   end
 
+  describe "preview update" do
+    test "renders previews", %{conn: conn} do
+      conn =
+        post(conn, Routes.update_path(conn, :preview),
+          update: %{text: "$ man ed\n\n#currentstatus"}
+        )
+
+      assert html_response(conn, 200) =~ "$ man ed\n\n#currentstatus"
+    end
+  end
+
   describe "create update" do
     setup do
       FakeGithub.Contents.start_link()
