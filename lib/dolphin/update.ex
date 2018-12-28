@@ -44,4 +44,24 @@ defmodule Dolphin.Update do
     |> Enum.join("-")
     |> Kernel.<>(".md")
   end
+
+  @doc ~S"""
+  Extracts the metadata from an update.
+
+  ## Example
+
+      iex> Dolphin.Update.metadata(
+      ...>   %Dolphin.Update{
+      ...>     text: "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
+      ...>     in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
+      ...>   }
+      ...> )
+      %{in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"}
+
+  """
+  def metadata(%{in_reply_to: in_reply_to}) do
+    %{in_reply_to: in_reply_to}
+  end
+
+  def metadata(_), do: %{}
 end
