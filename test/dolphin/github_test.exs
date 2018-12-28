@@ -8,6 +8,7 @@ defmodule Dolphin.GithubTest do
 
   describe "post/1" do
     test "posts a file to a Github repository" do
+      FakeGithub.Contents.start_link()
       response = Dolphin.Github.post(%Dolphin.Update{text: "$ man ed\n\n#currentstatus"})
 
       assert {201,
@@ -20,6 +21,8 @@ defmodule Dolphin.GithubTest do
                   }
                 }
               }, _} = response
+
+      assert FakeGithub.Contents.files == ["$ man ed\n\n#currentstatus"]
     end
   end
 end

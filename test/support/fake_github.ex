@@ -3,7 +3,22 @@ defmodule FakeGithub.Client do
 end
 
 defmodule FakeGithub.Contents do
-  def create(_client, username, repository, filename, _body) do
+  def start_link() do
+    Agent.start_link(fn -> %{files: []} end, name: __MODULE__)
+  end
+
+  def files do
+    Agent.get(__MODULE__, &Map.get(&1, :files))
+  end
+
+  def create(_client, username, repository, filename, body) do
+    if Process.whereis(__MODULE__) do
+      Agent.update(__MODULE__, fn %{files: files} = state ->
+        {:ok, content} = Base.decode64(body["content"])
+        %{state | files: [content | files]}
+      end)
+    end
+
     {201,
      %{
        "commit" => %{
@@ -11,7 +26,8 @@ defmodule FakeGithub.Contents do
        },
        "content" => %{
          "_links" => %{
-           "html" => "https://github.com/" <> username <> "/" <> repository <> "/blob/master/" <> filename
+           "html" =>
+             "https://github.com/" <> username <> "/" <> repository <> "/blob/master/" <> filename
          }
        }
      }, %HTTPoison.Response{}}
