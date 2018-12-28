@@ -28,7 +28,7 @@ defmodule Dolphin.GithubTest do
                 }
               }, _} = response
 
-      assert FakeGithub.Contents.files() == ["$ man ed\n\n#currentstatus"]
+      assert FakeGithub.Contents.files() == ["$ man ed\n\n#currentstatus\n"]
     end
 
     test "posts a reply to a Github repository" do
