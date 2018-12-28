@@ -2,6 +2,10 @@ defmodule Dolphin.Update.Twitter do
   defstruct [:content, :in_reply_to_id]
   alias Dolphin.Update
 
+  @twitter Application.get_env(:dolphin, :twitter, ExTwitter)
+  @credentials Application.get_env(:dolphin, :twitter_credentials)
+  @username @credentials[:username]
+
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Twitter{})
   end
@@ -14,6 +18,18 @@ defmodule Dolphin.Update.Twitter do
 
   defp from_update(%Update{text: text}, acc) do
     %{acc | content: replace_mentions(text)}
+  end
+
+  def post(%Dolphin.Update.Twitter{content: content}) do
+    %{id: id} = @twitter.update(content)
+
+    {:ok, ["https://twitter.com/#{@username}/status/#{id}"]}
+  end
+
+  def post(%Update{} = update) do
+    update
+    |> from_update
+    |> post
   end
 
   defp replace_mentions(text) do
