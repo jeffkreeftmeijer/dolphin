@@ -22,6 +22,13 @@ defmodule Dolphin.Update.MastodonTest do
                  in_reply_to: "https://ruby.social/@solnic/101275229051824324"
                })
     end
+
+    test "does not try to find  an in_reply_to_id from an empty url" do
+      assert %Dolphin.Update.Mastodon{in_reply_to_id: nil} =
+               Dolphin.Update.Mastodon.from_update(%Dolphin.Update{
+                 in_reply_to: ""
+               })
+    end
   end
 
   describe "post/1" do

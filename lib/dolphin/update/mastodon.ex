@@ -18,7 +18,7 @@ defmodule Dolphin.Update.Mastodon do
     from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
   end
 
-  defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) do
+  defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do
     %{statuses: [%{id: in_reply_to_id} | _]} = @mastodon.search(@conn, url)
 
     from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
