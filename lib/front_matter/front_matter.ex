@@ -6,13 +6,17 @@ defmodule FrontMatter do
 
       iex> FrontMatter.encode(
       ...>   "Encodes content with metadata into a document with front matter.",
-      ...>   %{date: "2018-12-27"}
+      ...>   %{
+      ...>     date: "2018-12-27",
+      ...>     twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]
+      ...>   }
       ...> )
       {
         :ok,
         """
         ---
         date: 2018-12-27
+        twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]
         ---
         Encodes content with metadata into a document with front matter.
         """
@@ -56,7 +60,7 @@ defmodule FrontMatter do
   defp do_encode(content, metadata) do
     front_matter =
       metadata
-      |> Enum.map(fn {key, value} -> to_string(key) <> ": " <> value end)
+      |> Enum.map(fn {key, value} -> to_string(key) <> ": " <> value_to_string(value) end)
       |> Enum.join("\n")
 
     {
@@ -74,4 +78,7 @@ defmodule FrontMatter do
     {:ok, document} = encode(content, metadata)
     document
   end
+
+  defp value_to_string(value) when is_binary(value), do: value
+  defp value_to_string(value), do: inspect(value)
 end
