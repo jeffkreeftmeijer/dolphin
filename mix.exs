@@ -41,7 +41,8 @@ defmodule Dolphin.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:basic_auth, "~> 2.2.2"},
       {:stream_data, "~> 0.1", only: :test},
-      {:tentacat, "~> 1.0"}
+      {:tentacat, "~> 1.0"},
+      {:extwitter, "~> 0.9"}
     ]
   end
 end
