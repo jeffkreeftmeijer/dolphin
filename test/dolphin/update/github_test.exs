@@ -63,7 +63,7 @@ defmodule Dolphin.Update.GithubTest do
     test "posts a reply to a Github repository" do
       Dolphin.Update.Github.post(%Dolphin.Update{
         text:
-        "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
+          "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
         in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
       })
 

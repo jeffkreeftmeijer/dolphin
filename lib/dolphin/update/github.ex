@@ -17,14 +17,14 @@ defmodule Dolphin.Update.Github do
     }
   end
 
-  def post(%Update{text: text} = update) do
-    metadata = Update.metadata(update)
-    filename = Update.filename(update)
-    content = text
-              |> FrontMatter.encode!(metadata)
-              |> Base.encode64()
-
-    body = %{"content" => content, message: "Add " <> filename}
+  def post(%Dolphin.Update.Github{filename: filename, content: content}) do
+    body = %{"content" => Base.encode64(content), message: "Add " <> filename}
     Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
+  end
+
+  def post(%Update{} = update) do
+    update
+    |> from_update
+    |> post
   end
 end
