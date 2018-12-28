@@ -13,7 +13,8 @@ defmodule Dolphin.Update do
 
   def post(%Dolphin.Update{} = update) do
     {:ok, twitter_links} = Twitter.post(update)
-    {:ok, github_links} = Github.post(update)
+
+    {:ok, github_links} = Github.post(%{update | twitter: twitter_links})
 
     {:ok, %{github: github_links, twitter: twitter_links}}
   end

@@ -23,7 +23,8 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert response = html_response(conn, 200)
       assert response =~ "Update posted succesfully."
 
-      assert FakeGithub.Contents.files() == ["$ man ed\n\n#currentstatus\n"]
+      [file] = FakeGithub.Contents.files()
+      assert file =~ ~r/\$ man ed\n\n#currentstatus\n/
 
       assert response =~
                "https://github.com/jeffkreeftmeijer/testing/blob/master/2018-12-27-man-ed-currentstatus.md"
@@ -44,9 +45,12 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert response = html_response(conn, 200)
       assert response =~ "Update posted succesfully."
 
-      assert FakeGithub.Contents.files() == [
-               "---\nin_reply_to: https://mastodon.social/web/statuses/101195085216392589\n---\n@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!\n"
-             ]
+      [file] = FakeGithub.Contents.files()
+
+      assert file =~ ~r/in_reply_to: https:\/\/mastodon.social\/web\/statuses\/101195085216392589/
+
+      assert file =~
+               ~r/@judofyr@ruby.social because ed is the standard text editor \(https:\/\/www.gnu.org\/fun\/jokes\/ed-msg.txt\)!\n/
 
       assert response =~
                "https://github.com/jeffkreeftmeijer/testing/blob/master/2018-12-27-because-ed-is-the-standard.md"

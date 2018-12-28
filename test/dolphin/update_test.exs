@@ -13,17 +13,23 @@ defmodule Dolphin.UpdateTest do
   end
 
   describe "post/1" do
-    test "posts the update to github" do
-      {:ok, %{github: [url]}} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+    setup do
+      FakeGithub.Contents.start_link()
+      {:ok, _} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+    end
 
+    test "posts the update to github", %{github: [url]} do
       assert url =~
                ~r/https:\/\/github.com\/\w+\/\w+\/blob\/master\/2018-12-27-man-ed-currentstatus.md/
     end
 
-    test "posts the update to twitter" do
-      {:ok, %{twitter: [url]}} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
-
+    test "posts the update to twitter", %{twitter: [url]} do
       assert url =~ ~r/https:\/\/twitter.com\/\w+\/status\/12119/
+    end
+
+    test "adds the twitter URL to the github update" do
+      [file] = FakeGithub.Contents.files()
+      assert file =~ ~r/twitter: \["https:\/\/twitter.com\/\w+\/status\/12119"\]/
     end
   end
 
