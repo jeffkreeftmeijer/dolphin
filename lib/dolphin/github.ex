@@ -12,7 +12,9 @@ defmodule Dolphin.Github do
   end
 
   def post(%Update{in_reply_to: in_reply_to, text: text} = update) do
-    do_post("---\nin_reply_to: " <> in_reply_to <> "\n---\n" <> text, Update.filename(update))
+    text
+    |> FrontMatter.encode!(%{in_reply_to: in_reply_to})
+    |> do_post(Update.filename(update))
   end
 
   defp do_post(content, filename) do
