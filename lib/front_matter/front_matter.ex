@@ -31,7 +31,7 @@ defmodule FrontMatter do
 
       iex> FrontMatter.encode(
       ...>   "Does not include empty metadata keys in the front matter.",
-      ...>   %{date: nil}
+      ...>   %{date: nil, text: ""}
       ...> )
       {
         :ok,
@@ -43,7 +43,7 @@ defmodule FrontMatter do
   def encode(content, metadata) do
     filtered_metadata =
       metadata
-      |> Enum.reject(fn {_key, value} -> value == nil end)
+      |> Enum.reject(fn {_key, value} -> value in ["", nil] end)
       |> Enum.into(%{})
 
     do_encode(content, filtered_metadata)
