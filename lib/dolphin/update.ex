@@ -1,5 +1,5 @@
 defmodule Dolphin.Update do
-  defstruct in_reply_to: nil, text: ""
+  defstruct [:in_reply_to, :text, :twitter]
   alias Dolphin.Update.{Github, Twitter}
 
   @date Application.get_env(:dolphin, :date, Date)
@@ -47,16 +47,15 @@ defmodule Dolphin.Update do
 
       iex> Dolphin.Update.metadata(
       ...>   %Dolphin.Update{
-      ...>     text: "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
-      ...>     in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
+      ...>     text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
+      ...>     in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208",
+      ...>     twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]
       ...>   }
       ...> )
-      %{in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"}
+      %{in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208", twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"]}
 
   """
-  def metadata(%{in_reply_to: in_reply_to}) do
-    %{in_reply_to: in_reply_to}
+  def metadata(update) do
+    Map.take(update, [:in_reply_to, :twitter])
   end
-
-  def metadata(_), do: %{}
 end
