@@ -42,21 +42,12 @@ defmodule Dolphin.Update.GithubTest do
 
   describe "post/1" do
     test "posts a file to a Github repository" do
-      response = Dolphin.Update.Github.post(%Dolphin.Update{text: "$ man ed\n\n#currentstatus"})
+      update = %Dolphin.Update{text: "$ man ed\n\n#currentstatus"}
 
-      assert {201,
-              %{
-                "commit" => %{"message" => "Add 2018-12-27-man-ed-currentstatus.md"},
-                "content" => %{
-                  "_links" => %{
-                    "html" =>
-                      "https://github.com/" <>
-                        @username <>
-                        "/" <> @repository <> "/blob/master/2018-12-27-man-ed-currentstatus.md"
-                  }
-                }
-              }, _} = response
+      expected_url =
+        "https://github.com/#{@username}/#{@repository}/blob/master/2018-12-27-man-ed-currentstatus.md"
 
+      assert Dolphin.Update.Github.post(update) == {:ok, [expected_url]}
       assert FakeGithub.Contents.files() == ["$ man ed\n\n#currentstatus\n"]
     end
 

@@ -19,7 +19,11 @@ defmodule Dolphin.Update.Github do
 
   def post(%Dolphin.Update.Github{filename: filename, content: content}) do
     body = %{"content" => Base.encode64(content), message: "Add " <> filename}
-    Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
+
+    {201, %{"content" => %{"_links" => %{"html" => link}}}, _response} =
+      Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
+
+    {:ok, [link]}
   end
 
   def post(%Update{} = update) do

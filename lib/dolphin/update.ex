@@ -5,9 +5,7 @@ defmodule Dolphin.Update do
   @date Application.get_env(:dolphin, :date, Date)
 
   def post(%Dolphin.Update{} = update) do
-    {201, %{"content" => %{"_links" => %{"html" => link}}}, _} = Github.post(update)
-
-    {:ok, [link]}
+    Github.post(update)
   end
 
   def post(update) do
