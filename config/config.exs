@@ -31,6 +31,10 @@ config :extwitter, :oauth,
   access_token: System.get_env("TWITTER_ACCESS_TOKEN"),
   access_token_secret: System.get_env("TWITTER_TOKEN_SECRET")
 
+config :dolphin, :mastodon_credentials,
+  base_url: System.get_env("MASTODON_BASE_URL"),
+  bearer_token: System.get_env("MASTODON_BEARER_TOKEN")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
