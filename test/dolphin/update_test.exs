@@ -14,10 +14,16 @@ defmodule Dolphin.UpdateTest do
 
   describe "post/1" do
     test "posts the update to github" do
-      {:ok, [url]} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+      {:ok, %{github: [url]}} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
 
       assert url =~
                ~r/https:\/\/github.com\/\w+\/\w+\/blob\/master\/2018-12-27-man-ed-currentstatus.md/
+    end
+
+    test "posts the update to twitter" do
+      {:ok, %{twitter: [url]}} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+
+      assert url =~ ~r/https:\/\/twitter.com\/\w+\/status\/12119/
     end
   end
 

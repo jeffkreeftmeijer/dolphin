@@ -1,6 +1,6 @@
 defmodule Dolphin.Update do
   defstruct in_reply_to: nil, text: ""
-  alias Dolphin.Update.Github
+  alias Dolphin.Update.{Github, Twitter}
 
   @date Application.get_env(:dolphin, :date, Date)
 
@@ -12,7 +12,10 @@ defmodule Dolphin.Update do
   end
 
   def post(%Dolphin.Update{} = update) do
-    Github.post(update)
+    {:ok, twitter_links} = Twitter.post(update)
+    {:ok, github_links} = Github.post(update)
+
+    {:ok, %{github: github_links, twitter: twitter_links}}
   end
 
   @doc ~S"""

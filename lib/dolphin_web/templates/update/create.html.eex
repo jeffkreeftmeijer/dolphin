@@ -2,8 +2,14 @@
 
 <p>Update posted succesfully.</p>
 <ul>
-  <%= for link <- @links do %>
-    <li><%= link link, to: link %></li>
+  <%= for {name, values} <- @links do %>
+    <li><%= name %>
+      <ul>
+        <%= for url <- values do %>
+          <li><%= link url, to: url %></li>
+        <% end %>
+      </ul>
+    </li>
   <% end %>
 </ul>
 

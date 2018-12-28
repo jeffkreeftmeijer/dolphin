@@ -27,6 +27,8 @@ defmodule DolphinWeb.UpdateControllerTest do
 
       assert response =~
                "https://github.com/jeffkreeftmeijer/testing/blob/master/2018-12-27-man-ed-currentstatus.md"
+
+      assert response =~ "https://twitter.com/jkreeftmeijer/status/12119"
     end
 
     test "adds front matter to posted updates for replies", %{conn: conn} do
