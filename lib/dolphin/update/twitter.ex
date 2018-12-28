@@ -10,7 +10,7 @@ defmodule Dolphin.Update.Twitter do
     from_update(update, %Dolphin.Update.Twitter{})
   end
 
-  defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) do
+  defp from_update(%Update{in_reply_to: "https://twitter.com/" <> _ = url} = update, acc) do
     [_, in_reply_to_id] = Regex.run(~r/https:\/\/twitter.com\/\w+\/status\/(\d+)/, url)
 
     from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
