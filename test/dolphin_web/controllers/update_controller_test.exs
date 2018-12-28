@@ -27,7 +27,7 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert file =~ ~r/\$ man ed\n\n#currentstatus\n/
 
       assert response =~
-               "https://github.com/jeffkreeftmeijer/testing/blob/master/2018-12-27-man-ed-currentstatus.md"
+               "https://github.com/jeffkreeftmeijer/updates/blob/master/2018-12-27-man-ed-currentstatus.md"
 
       assert response =~ "https://twitter.com/jkreeftmeijer/status/12119"
     end
@@ -53,7 +53,7 @@ defmodule DolphinWeb.UpdateControllerTest do
                ~r/@judofyr@ruby.social because ed is the standard text editor \(https:\/\/www.gnu.org\/fun\/jokes\/ed-msg.txt\)!\n/
 
       assert response =~
-               "https://github.com/jeffkreeftmeijer/testing/blob/master/2018-12-27-because-ed-is-the-standard.md"
+               "https://github.com/jeffkreeftmeijer/updates/blob/master/2018-12-27-because-ed-is-the-standard.md"
     end
   end
 end

@@ -13,3 +13,11 @@ config :dolphin, date: FakeDate
 config :dolphin, github: FakeGithub
 config :dolphin, twitter: FakeTwitter
 config :dolphin, mastodon: FakeMastodon
+
+config :dolphin, :github_credentials,
+  username: "jeffkreeftmeijer",
+  repository: "updates"
+
+config :dolphin, :twitter_credentials, username: "jkreeftmeijer"
+
+config :dolphin, :mastodon_credentials, base_url: "https://mastodon.social"
