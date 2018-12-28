@@ -11,6 +11,35 @@ defmodule Dolphin.Update.GithubTest do
     :ok
   end
 
+  describe "from_update/1" do
+    test "creates a Github update from an Update" do
+      assert Dolphin.Update.Github.from_update(%Dolphin.Update{
+               text: "$ man ed\n\n#currentstatus"
+             }) ==
+               %Dolphin.Update.Github{
+                 filename: "2018-12-27-man-ed-currentstatus.md",
+                 content: "$ man ed\n\n#currentstatus\n"
+               }
+    end
+
+    test "creates a Github reply from an Update" do
+      assert Dolphin.Update.Github.from_update(%Dolphin.Update{
+               text:
+                 "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
+               in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
+             }) ==
+               %Dolphin.Update.Github{
+                 filename: "2018-12-27-because-ed-is-the-standard.md",
+                 content: """
+                 ---
+                 in_reply_to: https://mastodon.social/web/statuses/101195085216392589
+                 ---
+                 @judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!
+                 """
+               }
+    end
+  end
+
   describe "post/1" do
     test "posts a file to a Github repository" do
       response = Dolphin.Update.Github.post(%Dolphin.Update{text: "$ man ed\n\n#currentstatus"})
