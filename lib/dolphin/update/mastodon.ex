@@ -1,6 +1,6 @@
 defmodule Dolphin.Update.Mastodon do
-  defstruct [:content, :in_reply_to_id]
-  alias Dolphin.Update
+  defstruct [:content, :in_reply_to_id, :reply]
+  alias Dolphin.{Update, Update.Split}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
   @credentials Application.get_env(:dolphin, :mastodon_credentials)
@@ -31,16 +31,26 @@ defmodule Dolphin.Update.Mastodon do
   defp from_update(%Update{text: text}, acc) do
     case validate_mentions(text) do
       :ok ->
-        content =
+        update =
           text
           |> Smarty.convert!()
+          |> Split.split(500)
+          |> from_splits(acc)
 
-        {:ok, %{acc | content: content}}
+        {:ok, update}
 
       {:error, _} = error ->
         error
     end
   end
+
+  defp from_splits(splits, update \\ %Dolphin.Update.Mastodon{})
+
+  defp from_splits([content | tail], update) do
+    %{update | content: content, reply: from_splits(tail)}
+  end
+
+  defp from_splits([], _update), do: nil
 
   def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
       when is_binary(in_reply_to_id) do
