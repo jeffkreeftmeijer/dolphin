@@ -58,7 +58,7 @@ defmodule Dolphin.Update.MastodonTest do
     end
 
     test "posts an update to Mastodon" do
-      update = %Update{text: "$ man ed\n\n#currentstatus"}
+      update = %Mastodon{content: "$ man ed\n\n#currentstatus"}
 
       expected_url = "https://mastodon.social/@jkreeftmeijer/12119"
 
@@ -67,10 +67,10 @@ defmodule Dolphin.Update.MastodonTest do
     end
 
     test "posts a reply to Mastodon" do
-      Mastodon.post(%Update{
-        text:
+      Mastodon.post(%Mastodon{
+        content:
           "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!",
-        in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
+        in_reply_to_id: "101195085216392589"
       })
 
       assert [{_, [in_reply_to_status_id: "101195085216392589"]}] = FakeMastodon.updates()
