@@ -1,6 +1,7 @@
 /* This file is for your main application css. */
 
 @import "./enough.css/enough.css";
+@import "./enough.css/enough.media.css";
 @import "./enough.css/enough.code.css";
 
 input, textarea{
