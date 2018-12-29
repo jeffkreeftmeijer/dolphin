@@ -10,11 +10,12 @@ defmodule FakeMastodon do
   def create_status(_conn, status, options \\ []) do
     if Process.whereis(__MODULE__) do
       Agent.update(__MODULE__, fn %{updates: updates} = state ->
-        %{state | updates: [{status, options} | updates]}
+        %{state | updates: updates ++ [{status, options}]}
       end)
     end
 
-    %{url: "https://mastodon.social/@jkreeftmeijer/#{id(status)}"}
+    id = id(status)
+    %{id: "#{id}", url: "https://mastodon.social/@jkreeftmeijer/#{id}"}
   end
 
   def search(_conn, "https://ruby.social/@solnic/101275229051824324") do

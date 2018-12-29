@@ -1,6 +1,6 @@
 defmodule Dolphin.Update.Mastodon do
-  defstruct [:content, :in_reply_to_id]
-  alias Dolphin.Update
+  defstruct [:content, :in_reply_to_id, :reply]
+  alias Dolphin.{Update, Update.Split}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
   @credentials Application.get_env(:dolphin, :mastodon_credentials)
@@ -31,28 +31,41 @@ defmodule Dolphin.Update.Mastodon do
   defp from_update(%Update{text: text}, acc) do
     case validate_mentions(text) do
       :ok ->
-        content =
+        update =
           text
           |> Smarty.convert!()
+          |> Split.split(500)
+          |> from_splits(acc)
 
-        {:ok, %{acc | content: content}}
+        {:ok, update}
 
       {:error, _} = error ->
         error
     end
   end
 
-  def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
-      when is_binary(in_reply_to_id) do
-    %{url: url} = @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+  defp from_splits(splits, update \\ %Dolphin.Update.Mastodon{})
 
-    {:ok, [url]}
+  defp from_splits([content | tail], update) do
+    %{update | content: content, reply: from_splits(tail)}
   end
 
-  def post(%Dolphin.Update.Mastodon{content: content}) do
-    %{url: url} = @mastodon.create_status(@conn, content)
+  defp from_splits([], _update), do: nil
 
-    {:ok, [url]}
+  def post(%Dolphin.Update.Mastodon{reply: reply} = update) do
+    %{id: id, url: url} = do_post(update)
+
+    reply_urls =
+      case reply do
+        %Dolphin.Update.Mastodon{} ->
+          {:ok, urls} = post(%{reply | in_reply_to_id: id})
+          urls
+
+        _ ->
+          []
+      end
+
+    {:ok, [url] ++ reply_urls}
   end
 
   def post(%Update{} = update) do
@@ -60,6 +73,15 @@ defmodule Dolphin.Update.Mastodon do
       {:ok, update} -> post(update)
       {:error, _} = error -> error
     end
+  end
+
+  defp do_post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
+       when in_reply_to_id != nil do
+    @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+  end
+
+  defp do_post(%Dolphin.Update.Mastodon{content: content}) do
+    @mastodon.create_status(@conn, content)
   end
 
   defp validate_mentions(text) do

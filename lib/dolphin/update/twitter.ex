@@ -1,6 +1,6 @@
 defmodule Dolphin.Update.Twitter do
-  defstruct [:content, :in_reply_to_id]
-  alias Dolphin.Update
+  defstruct [:content, :in_reply_to_id, :reply]
+  alias Dolphin.{Update, Update.Split}
 
   @twitter Application.get_env(:dolphin, :twitter, ExTwitter)
   @credentials Application.get_env(:dolphin, :twitter_credentials)
@@ -23,29 +23,42 @@ defmodule Dolphin.Update.Twitter do
   defp from_update(%Update{text: text}, acc) do
     case validate_mentions(text) do
       :ok ->
-        content =
+        update =
           text
           |> replace_mentions()
           |> Smarty.convert!()
+          |> Split.split(280)
+          |> from_splits(acc)
 
-        {:ok, %{acc | content: content}}
+        {:ok, update}
 
       {:error, _} = error ->
         error
     end
   end
 
-  def post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
-      when in_reply_to_id != nil do
-    %{id: id} = @twitter.update(content, in_reply_to_status_id: in_reply_to_id)
+  defp from_splits(splits, update \\ %Dolphin.Update.Twitter{})
 
-    {:ok, ["https://twitter.com/#{@username}/status/#{id}"]}
+  defp from_splits([content | tail], update) do
+    %{update | content: content, reply: from_splits(tail)}
   end
 
-  def post(%Dolphin.Update.Twitter{content: content}) do
-    %{id: id} = @twitter.update(content)
+  defp from_splits([], _update), do: nil
 
-    {:ok, ["https://twitter.com/#{@username}/status/#{id}"]}
+  def post(%Dolphin.Update.Twitter{reply: reply} = update) do
+    %{id: id} = do_post(update)
+
+    reply_urls =
+      case reply do
+        %Dolphin.Update.Twitter{} ->
+          {:ok, urls} = post(%{reply | in_reply_to_id: id})
+          urls
+
+        _ ->
+          []
+      end
+
+    {:ok, ["https://twitter.com/#{@username}/status/#{id}"] ++ reply_urls}
   end
 
   def post(%Update{} = update) do
@@ -53,6 +66,15 @@ defmodule Dolphin.Update.Twitter do
       {:ok, update} -> post(update)
       {:error, _} = error -> error
     end
+  end
+
+  defp do_post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
+       when in_reply_to_id != nil do
+    @twitter.update(content, in_reply_to_status_id: in_reply_to_id)
+  end
+
+  defp do_post(%Dolphin.Update.Twitter{content: content}) do
+    @twitter.update(content)
   end
 
   defp replace_mentions(text) do
