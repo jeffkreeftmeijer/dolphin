@@ -1,6 +1,5 @@
-<h1>New Update</h1>
+<h1>Update posted succesfully</h1>
 
-<p>Update posted succesfully.</p>
 <ul>
   <%= for {name, values} <- @links do %>
     <li><%= name %>

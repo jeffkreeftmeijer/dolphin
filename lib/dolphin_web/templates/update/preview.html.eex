@@ -1,4 +1,5 @@
-<h1>New Update</h1>
+<h1>Update preview</h1>
+
 <h2>Twitter</h2>
 <pre><%= @twitter.content %></pre>
 <h2>Mastodon</h2>

@@ -32,7 +32,7 @@ defmodule DolphinWeb.UpdateControllerTest do
         )
 
       assert response = html_response(conn, 200)
-      assert response =~ "Update posted succesfully."
+      assert response =~ "Update posted succesfully"
 
       [file] = FakeGithub.Contents.files()
       assert file =~ ~r/\$ man ed\n\n#currentstatus\n/
@@ -54,7 +54,7 @@ defmodule DolphinWeb.UpdateControllerTest do
         )
 
       assert response = html_response(conn, 200)
-      assert response =~ "Update posted succesfully."
+      assert response =~ "Update posted succesfully"
 
       [file] = FakeGithub.Contents.files()
 
