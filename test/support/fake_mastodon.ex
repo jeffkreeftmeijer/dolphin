@@ -29,6 +29,14 @@ defmodule FakeMastodon do
     }
   end
 
+  def search(_conn, _) do
+    %Hunter.Result{
+      accounts: [],
+      hashtags: [],
+      statuses: []
+    }
+  end
+
   defp id(status) do
     sum =
       status

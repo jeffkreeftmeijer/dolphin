@@ -18,7 +18,11 @@ defmodule Dolphin.Update do
         _ -> []
       end
 
-    {:ok, mastodon_links} = Mastodon.post(update)
+    mastodon_links =
+      case Mastodon.post(update) do
+        {:ok, links} -> links
+        _ -> []
+      end
 
     {:ok, github_links} =
       Github.post(%{update | twitter: twitter_links, mastodon: mastodon_links})

@@ -19,13 +19,17 @@ defmodule Dolphin.Update.Mastodon do
   end
 
   defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do
-    %{statuses: [%{id: in_reply_to_id} | _]} = @mastodon.search(@conn, url)
+    case @mastodon.search(@conn, url) do
+      %{statuses: [%{id: in_reply_to_id} | _]} ->
+        from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
 
-    from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+      _ ->
+        {:error, :invalid_in_reply_to}
+    end
   end
 
   defp from_update(%Update{text: text}, acc) do
-    %{acc | content: text}
+    {:ok, %{acc | content: text}}
   end
 
   def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
@@ -42,8 +46,9 @@ defmodule Dolphin.Update.Mastodon do
   end
 
   def post(%Update{} = update) do
-    update
-    |> from_update
-    |> post
+    case from_update(update) do
+      {:ok, update} -> post(update)
+      {:error, _} = error -> error
+    end
   end
 end
