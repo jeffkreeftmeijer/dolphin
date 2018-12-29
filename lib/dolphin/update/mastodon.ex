@@ -34,6 +34,7 @@ defmodule Dolphin.Update.Mastodon do
         update =
           text
           |> Smarty.convert!()
+          |> Update.replace_markdown_links()
           |> Split.split(500)
           |> from_splits(acc)
 

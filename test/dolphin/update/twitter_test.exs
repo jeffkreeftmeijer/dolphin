@@ -38,6 +38,11 @@ defmodule Dolphin.Update.TwitterTest do
                Twitter.from_update(%Update{text: "I'll start testing these tips in Vim 8."})
     end
 
+    test "replaces markdown links" do
+      assert {:ok, %Twitter{content: "Mastodon (https://mastodon.social)"}} =
+               Twitter.from_update(%Update{text: "[Mastodon](https://mastodon.social)"})
+    end
+
     test "is invalid for a non-Twitter reply" do
       assert {:error, :invalid_in_reply_to} =
                Twitter.from_update(%Update{

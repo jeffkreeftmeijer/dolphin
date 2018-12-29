@@ -71,4 +71,21 @@ defmodule Dolphin.Update do
   def metadata(update) do
     Map.take(update, [:in_reply_to, :twitter, :mastodon])
   end
+
+  @doc ~S"""
+  Replaces markdown links.
+
+  ## Example
+
+      iex> Dolphin.Update.replace_markdown_links("<https://mastodon.social/@jkreeftmeijer/101236371751163533>")
+      "https://mastodon.social/@jkreeftmeijer/101236371751163533"
+      iex> Dolphin.Update.replace_markdown_links("[Mastodon](https://mastodon.social)")
+      "Mastodon (https://mastodon.social)"
+
+  """
+  def replace_markdown_links(update) do
+    update
+    |> String.replace(~r/\<(http[^>]+)\>/, "\\1")
+    |> String.replace(~r/\[([^\]]+)\]\(([^\)]+)\)/, "\\1 (\\2)")
+  end
 end
