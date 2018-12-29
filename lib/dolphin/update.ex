@@ -12,7 +12,12 @@ defmodule Dolphin.Update do
   end
 
   def post(%Dolphin.Update{} = update) do
-    {:ok, twitter_links} = Twitter.post(update)
+    twitter_links =
+      case Twitter.post(update) do
+        {:ok, links} -> links
+        _ -> []
+      end
+
     {:ok, mastodon_links} = Mastodon.post(update)
 
     {:ok, github_links} =

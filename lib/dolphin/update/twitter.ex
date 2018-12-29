@@ -10,14 +10,18 @@ defmodule Dolphin.Update.Twitter do
     from_update(update, %Dolphin.Update.Twitter{})
   end
 
-  defp from_update(%Update{in_reply_to: "https://twitter.com/" <> _ = url} = update, acc) do
-    [_, in_reply_to_id] = Regex.run(~r/https:\/\/twitter.com\/\w+\/status\/(\d+)/, url)
+  defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do
+    case Regex.run(~r/https:\/\/twitter.com\/\w+\/status\/(\d+)/, url) do
+      [_, in_reply_to_id] ->
+        from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
 
-    from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+      _ ->
+        {:error, :invalid_in_reply_to}
+    end
   end
 
   defp from_update(%Update{text: text}, acc) do
-    %{acc | content: replace_mentions(text)}
+    {:ok, %{acc | content: replace_mentions(text)}}
   end
 
   def post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
@@ -34,9 +38,10 @@ defmodule Dolphin.Update.Twitter do
   end
 
   def post(%Update{} = update) do
-    update
-    |> from_update
-    |> post
+    case from_update(update) do
+      {:ok, update} -> post(update)
+      {:error, _} = error -> error
+    end
   end
 
   defp replace_mentions(text) do

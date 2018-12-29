@@ -10,7 +10,13 @@ defmodule DolphinWeb.UpdateController do
     update = Dolphin.Update.from_params(update_params)
 
     github = Dolphin.Update.Github.from_update(update)
-    twitter = Dolphin.Update.Twitter.from_update(update)
+
+    twitter =
+      case Dolphin.Update.Twitter.from_update(update) do
+        {:ok, update} -> update
+        _ -> nil
+      end
+
     mastodon = Dolphin.Update.Mastodon.from_update(update)
 
     render(conn, "preview.html", github: github, twitter: twitter, mastodon: mastodon)

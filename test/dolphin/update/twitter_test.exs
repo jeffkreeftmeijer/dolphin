@@ -1,6 +1,7 @@
 defmodule Dolphin.Update.TwitterTest do
   use ExUnit.Case, async: true
   doctest Dolphin.Update.Twitter
+  alias Dolphin.{Update, Update.Twitter}
 
   @credentials Application.get_env(:dolphin, :twitter_credentials)
   @username @credentials[:username]
@@ -12,40 +13,46 @@ defmodule Dolphin.Update.TwitterTest do
 
   describe "from_update/1" do
     test "creates a Twitter update from an Update" do
-      assert Dolphin.Update.Twitter.from_update(%Dolphin.Update{
-               text: "$ man ed\n\n#currentstatus"
-             }) == %Dolphin.Update.Twitter{content: "$ man ed\n\n#currentstatus"}
+      assert Twitter.from_update(%Update{text: "$ man ed\n\n#currentstatus"}) ==
+               {:ok, %Twitter{content: "$ man ed\n\n#currentstatus"}}
     end
 
     test "finds the in_reply_to_id for a reply" do
-      assert %Dolphin.Update.Twitter{in_reply_to_id: "1075477062360670208"} =
-               Dolphin.Update.Twitter.from_update(%Dolphin.Update{
+      assert {:ok, %Twitter{in_reply_to_id: "1075477062360670208"}} =
+               Twitter.from_update(%Update{
                  text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
                  in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
                })
     end
 
     test "replaces mentions with Twitter-style ones" do
-      assert %Dolphin.Update.Twitter{content: "@tbdr More convoluted than that, actually. 😅"} =
-               Dolphin.Update.Twitter.from_update(%Dolphin.Update{
+      assert {:ok, %Twitter{content: "@tbdr More convoluted than that, actually. 😅"}} =
+               Twitter.from_update(%Update{
                  text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
                  in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
+               })
+    end
+
+    test "is invalid for a non-Twitter reply" do
+      assert {:error, :invalid_in_reply_to} =
+               Twitter.from_update(%Update{
+                 in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
                })
     end
   end
 
   describe "post/1" do
     test "posts an update to Twitter" do
-      update = %Dolphin.Update{text: "$ man ed\n\n#currentstatus"}
+      update = %Update{text: "$ man ed\n\n#currentstatus"}
 
       expected_url = "https://twitter.com/#{@username}/status/12119"
 
-      assert Dolphin.Update.Twitter.post(update) == {:ok, [expected_url]}
+      assert Twitter.post(update) == {:ok, [expected_url]}
       assert FakeTwitter.updates() == [{"$ man ed\n\n#currentstatus", []}]
     end
 
     test "posts a reply to Twitter" do
-      Dolphin.Update.Twitter.post(%Dolphin.Update{
+      Twitter.post(%Update{
         text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
         in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208"
       })
