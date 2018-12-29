@@ -93,5 +93,34 @@ defmodule Dolphin.Update.TwitterTest do
 
       assert [{_, [in_reply_to_status_id: "1075477062360670208"]}] = FakeTwitter.updates()
     end
+
+    test "posts a thread to Twitter" do
+      update = %Twitter{
+        content:
+          "Some of my articles explain how to build your own GenServer in Elixir or how to compare images in plain Ruby, and I’ve built minimal clones of libraries like RSpec and Spring in the past to understand and teach how they work.",
+        reply: %Twitter{
+          content:
+            "While you shouldn’t rely on a hand-rolled HTTP server or a naïve reimplementation of an ancient OTP construct in production, taking software apart and rebuilding it is the best way I know to understand what’s happening under the hood.",
+          reply: %Twitter{
+            content:
+              "The results aren’t better than what already exists, or implemented in the fewest lines of code. That's not the point. They're built to be as expressive as possible to help explain concepts like HTTP, Rack, or inter-process message passing, and because they're a fun exercise."
+          }
+        }
+      }
+
+      expected_urls = [
+        "https://twitter.com/#{@username}/status/38905",
+        "https://twitter.com/#{@username}/status/48305",
+        "https://twitter.com/#{@username}/status/43501"
+      ]
+
+      assert Twitter.post(update) == {:ok, expected_urls}
+
+      assert [
+               {"Some of my" <> _, []},
+               {"While you shouldn’t" <> _, [in_reply_to_status_id: 38905]},
+               {"The results aren’t" <> _, [in_reply_to_status_id: 48305]}
+             ] = FakeTwitter.updates()
+    end
   end
 end
