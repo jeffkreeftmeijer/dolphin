@@ -1,14 +1,14 @@
 <h1>Update preview</h1>
 
-<%= if @twitter do %>
-  <h2>Twitter</h2>
-  <pre><%= @twitter.content %></pre>
-<% end %>
+ <%= if @twitter do %>
+   <h2>Twitter</h2>
+   <%= render "update_preview.html", %{update: @twitter} %>
+ <% end %>
 
-<%= if @mastodon do %>
-  <h2>Mastodon</h2>
-  <pre><%= @mastodon.content %></pre>
-<% end %>
+ <%= if @mastodon do %>
+   <h2>Mastodon</h2>
+   <%= render "update_preview.html", %{update: @mastodon} %>
+ <% end %>
 
 <h2>Github</h2>
 <pre><%= @github.content %></pre>

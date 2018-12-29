@@ -1,0 +1,6 @@
+<pre><%= @update.content %></pre>
+
+<%= if @update.reply do %>
+  <%= render "update_preview.html", %{update: @update.reply} %>
+<% end %>
+
