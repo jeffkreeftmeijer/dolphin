@@ -26,19 +26,11 @@ defmodule Smarty do
   """
   def convert!(text) do
     text
-    |> replace(~r/'([^']+)'/, "‘\\1’")
-    |> replace(~r/("|``)([^']+)("|``)/, "“\\2”")
-    |> replace("'", "’")
-    |> replace("---", "—")
-    |> replace("--", "–")
-    |> replace("...", "…")
-  end
-
-  defp replace(text, pattern, replacement) when is_binary(pattern) do
-    String.replace(text, pattern, replacement)
-  end
-
-  defp replace(text, pattern, replacement) do
-    Regex.replace(pattern, text, replacement)
+    |> String.replace(~r/'([^']+)'/, "‘\\1’")
+    |> String.replace(~r/("|``)([^']+)("|``)/, "“\\2”")
+    |> String.replace("'", "’")
+    |> String.replace("---", "—")
+    |> String.replace("--", "–")
+    |> String.replace("...", "…")
   end
 end
