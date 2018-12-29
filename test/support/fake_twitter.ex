@@ -10,7 +10,7 @@ defmodule FakeTwitter do
   def update(status, options \\ []) do
     if Process.whereis(__MODULE__) do
       Agent.update(__MODULE__, fn %{updates: updates} = state ->
-        %{state | updates: [{status, options} | updates]}
+        %{state | updates: updates ++ [{status, options}]}
       end)
     end
 
