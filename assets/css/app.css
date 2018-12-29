@@ -12,3 +12,7 @@ input, textarea{
   font: inherit;
   border: 1px inset;
 }
+
+pre{
+  white-space: pre-wrap;
+}
