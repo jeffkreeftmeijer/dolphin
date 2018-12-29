@@ -2,10 +2,10 @@ defmodule Dolphin.Update.Split do
   def split(text, max) do
     splits =
       text
-      |> String.split("\n\n\n")
+      |> String.split(~r/(\r?\n){3}/)
       |> Enum.flat_map(fn break ->
         break
-        |> String.split("\n\n")
+        |> String.split(~r/(\r?\n){2}/)
         |> join!(max, [])
         |> Enum.reverse()
       end)
