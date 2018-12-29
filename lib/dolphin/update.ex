@@ -1,5 +1,5 @@
 defmodule Dolphin.Update do
-  defstruct [:in_reply_to, :text, :twitter, :mastodon]
+  defstruct text: "", in_reply_to: nil, twitter: nil, mastodon: nil
   alias Dolphin.Update.{Github, Twitter, Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
