@@ -52,17 +52,20 @@ defmodule Dolphin.Update.Mastodon do
 
   defp from_splits([], _update), do: nil
 
-  def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
-      when is_binary(in_reply_to_id) do
-    %{url: url} = @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+  def post(%Dolphin.Update.Mastodon{reply: reply} = update) do
+    %{id: id, url: url} = do_post(update)
 
-    {:ok, [url]}
-  end
+    reply_urls =
+      case reply do
+        %Dolphin.Update.Mastodon{} ->
+          {:ok, urls} = post(%{reply | in_reply_to_id: id})
+          urls
 
-  def post(%Dolphin.Update.Mastodon{content: content}) do
-    %{url: url} = @mastodon.create_status(@conn, content)
+        _ ->
+          []
+      end
 
-    {:ok, [url]}
+    {:ok, [url] ++ reply_urls}
   end
 
   def post(%Update{} = update) do
@@ -70,6 +73,15 @@ defmodule Dolphin.Update.Mastodon do
       {:ok, update} -> post(update)
       {:error, _} = error -> error
     end
+  end
+
+  defp do_post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
+       when in_reply_to_id != nil do
+    @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+  end
+
+  defp do_post(%Dolphin.Update.Mastodon{content: content}) do
+    @mastodon.create_status(@conn, content)
   end
 
   defp validate_mentions(text) do

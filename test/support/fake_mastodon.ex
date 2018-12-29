@@ -14,7 +14,8 @@ defmodule FakeMastodon do
       end)
     end
 
-    %{url: "https://mastodon.social/@jkreeftmeijer/#{id(status)}"}
+    id = id(status)
+    %{id: "#{id}", url: "https://mastodon.social/@jkreeftmeijer/#{id}"}
   end
 
   def search(_conn, "https://ruby.social/@solnic/101275229051824324") do
