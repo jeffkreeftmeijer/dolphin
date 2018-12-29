@@ -52,6 +52,27 @@ defmodule Dolphin.Update.TwitterTest do
                    "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!"
                })
     end
+
+    test "splits up updates longer than 280 characters" do
+      text = """
+      I *love* reinventing the wheel.
+
+      Some of my articles explain how to build your own GenServer in Elixir or how to compare images in plain Ruby, and I’ve built minimal clones of libraries like RSpec and Spring in the past to understand and teach how they work.
+
+      While you shouldn’t rely on a hand-rolled HTTP server or a naïve reimplementation of an ancient OTP construct in production, taking software apart and rebuilding it is the best way I know to understand what’s happening under the hood.
+
+      The results aren’t better than what already exists, or implemented in the fewest lines of code. That's not the point. They're built to be as expressive as possible to help explain concepts like HTTP, Rack, or inter-process message passing, and because they're a fun exercise.
+      """
+
+      assert {:ok,
+              %Twitter{
+                content: "I *love" <> _,
+                reply: %Twitter{
+                  content: "While you" <> _,
+                  reply: %Twitter{content: "The results aren’t" <> _}
+                }
+              }} = Twitter.from_update(%Update{text: text})
+    end
   end
 
   describe "post/1" do
