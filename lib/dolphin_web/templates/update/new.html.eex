@@ -1,11 +1,17 @@
 <h1>New Update</h1>
 
 <%= form_for @conn, Routes.update_path(@conn, :preview), [as: :update], fn f -> %>
+<p>
   <%= label f, :in_reply_to %>
   <%= text_input f, :in_reply_to %>
+</p>
 
+<p>
   <%= label f, :text %>
-  <%= textarea f, :text %>
+  <%= textarea f, :text, rows: 10 %>
+</p>
 
+<p>
   <%= submit "Preview!" %>
+</p>
 <% end %>
