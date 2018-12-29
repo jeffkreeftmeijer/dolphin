@@ -43,7 +43,7 @@ defmodule Dolphin.MixProject do
       {:stream_data, "~> 0.1", only: :test},
       {:tentacat, "~> 1.0"},
       {:extwitter, "~> 0.9"},
-      {:hunter, "~> 0.4"}
+      {:hunter, github: "jeffkreeftmeijer/hunter"}
     ]
   end
 end
