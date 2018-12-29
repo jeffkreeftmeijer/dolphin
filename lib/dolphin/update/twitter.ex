@@ -21,12 +21,18 @@ defmodule Dolphin.Update.Twitter do
   end
 
   defp from_update(%Update{text: text}, acc) do
-    content =
-      text
-      |> replace_mentions()
-      |> Smarty.convert!()
+    case validate_mentions(text) do
+      :ok ->
+        content =
+          text
+          |> replace_mentions()
+          |> Smarty.convert!()
 
-    {:ok, %{acc | content: content}}
+        {:ok, %{acc | content: content}}
+
+      {:error, _} = error ->
+        error
+    end
   end
 
   def post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
@@ -51,5 +57,13 @@ defmodule Dolphin.Update.Twitter do
 
   defp replace_mentions(text) do
     Regex.replace(~r/@(\w+)@twitter.com/, text, "@\\1")
+  end
+
+  defp validate_mentions(text) do
+    if Regex.match?(~r/(\@\w+(?!@twitter.com)\@[\w\.]+\.\w+)/, text) do
+      {:error, :invalid_mention}
+    else
+      :ok
+    end
   end
 end

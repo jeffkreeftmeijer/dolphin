@@ -29,9 +29,17 @@ defmodule Dolphin.Update.Mastodon do
   end
 
   defp from_update(%Update{text: text}, acc) do
-    content = Smarty.convert!(text)
+    case validate_mentions(text) do
+      :ok ->
+        content =
+          text
+          |> Smarty.convert!()
 
-    {:ok, %{acc | content: content}}
+        {:ok, %{acc | content: content}}
+
+      {:error, _} = error ->
+        error
+    end
   end
 
   def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
@@ -51,6 +59,14 @@ defmodule Dolphin.Update.Mastodon do
     case from_update(update) do
       {:ok, update} -> post(update)
       {:error, _} = error -> error
+    end
+  end
+
+  defp validate_mentions(text) do
+    if(Regex.match?(~r/\@.+@twitter.com/, text)) do
+      {:error, :invalid_mention}
+    else
+      :ok
     end
   end
 end

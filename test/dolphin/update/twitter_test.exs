@@ -44,6 +44,14 @@ defmodule Dolphin.Update.TwitterTest do
                  in_reply_to: "https://mastodon.social/web/statuses/101195085216392589"
                })
     end
+
+    test "is invalid with a non-Twitter mention" do
+      assert {:error, :invalid_mention} =
+               Twitter.from_update(%Update{
+                 text:
+                   "@judofyr@ruby.social because ed is the standard text editor (https://www.gnu.org/fun/jokes/ed-msg.txt)!"
+               })
+    end
   end
 
   describe "post/1" do

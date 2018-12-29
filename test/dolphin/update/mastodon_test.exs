@@ -42,6 +42,13 @@ defmodule Dolphin.Update.MastodonTest do
                  in_reply_to: "https://twitter.com/jkreeftmeijer/status/1078710137458700288"
                })
     end
+
+    test "is invalid with a Twitter mention" do
+      assert {:error, :invalid_mention} =
+               Mastodon.from_update(%Update{
+                 text: "@tbdr@twitter.com More convoluted than that, actually. 😅"
+               })
+    end
   end
 
   describe "post/1" do
