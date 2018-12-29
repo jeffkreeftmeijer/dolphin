@@ -7,11 +7,7 @@
 <pre><%= @github.content %></pre>
 
 <%= form_for @conn, Routes.update_path(@conn, :create), [as: :update], fn f -> %>
-  <%= label f, :in_reply_to %>
-  <%= text_input f, :in_reply_to %>
-
-  <%= label f, :text %>
-  <%= textarea f, :text %>
-
+  <%= hidden_input f, :in_reply_to %>
+  <%= hidden_input f, :text %>
   <%= submit "Post!" %>
 <% end %>
