@@ -29,7 +29,9 @@ defmodule Dolphin.Update.Mastodon do
   end
 
   defp from_update(%Update{text: text}, acc) do
-    {:ok, %{acc | content: text}}
+    content = Smarty.convert!(text)
+
+    {:ok, %{acc | content: content}}
   end
 
   def post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})

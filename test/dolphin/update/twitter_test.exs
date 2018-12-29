@@ -33,6 +33,11 @@ defmodule Dolphin.Update.TwitterTest do
                })
     end
 
+    test "does smartypants conversions" do
+      assert {:ok, %Twitter{content: "I’ll start testing these tips in Vim 8."}} =
+               Twitter.from_update(%Update{text: "I'll start testing these tips in Vim 8."})
+    end
+
     test "is invalid for a non-Twitter reply" do
       assert {:error, :invalid_in_reply_to} =
                Twitter.from_update(%Update{

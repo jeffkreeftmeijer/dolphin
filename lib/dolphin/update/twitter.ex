@@ -21,7 +21,12 @@ defmodule Dolphin.Update.Twitter do
   end
 
   defp from_update(%Update{text: text}, acc) do
-    {:ok, %{acc | content: replace_mentions(text)}}
+    content =
+      text
+      |> replace_mentions()
+      |> Smarty.convert!()
+
+    {:ok, %{acc | content: content}}
   end
 
   def post(%Dolphin.Update.Twitter{content: content, in_reply_to_id: in_reply_to_id})
