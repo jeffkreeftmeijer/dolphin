@@ -1,6 +1,6 @@
 defmodule Dolphin.Update.Mastodon do
   defstruct [:content, :in_reply_to_id, :reply]
-  alias Dolphin.{Update, Update.Split}
+  alias Dolphin.{Update, Update.Split, Update.Github}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
   @credentials Application.get_env(:dolphin, :mastodon_credentials)
@@ -16,6 +16,16 @@ defmodule Dolphin.Update.Mastodon do
          acc
        ) do
     from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+  end
+
+  defp from_update(%Update{in_reply_to: "/" <> path}, acc) do
+    case Github.get_metadata(path, "mastodon") do
+      {:ok, urls} ->
+        from_update(%Update{in_reply_to: List.last(urls)}, acc)
+
+      {:error, _} ->
+        {:error, :invalid_in_reply_to}
+    end
   end
 
   defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do

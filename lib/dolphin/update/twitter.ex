@@ -1,6 +1,6 @@
 defmodule Dolphin.Update.Twitter do
   defstruct [:content, :in_reply_to_id, :reply]
-  alias Dolphin.{Update, Update.Split}
+  alias Dolphin.{Update, Update.Split, Update.Github}
 
   @twitter Application.get_env(:dolphin, :twitter, ExTwitter)
   @credentials Application.get_env(:dolphin, :twitter_credentials)
@@ -8,6 +8,16 @@ defmodule Dolphin.Update.Twitter do
 
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Twitter{})
+  end
+
+  defp from_update(%Update{in_reply_to: "/" <> path}, acc) do
+    case Github.get_metadata(path, "twitter") do
+      {:ok, urls} ->
+        from_update(%Update{in_reply_to: List.last(urls)}, acc)
+
+      {:error, _} ->
+        {:error, :invalid_in_reply_to}
+    end
   end
 
   defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do

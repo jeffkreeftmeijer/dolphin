@@ -63,4 +63,13 @@ defmodule Dolphin.Update.GithubTest do
              ]
     end
   end
+
+  describe "get_metadata/2" do
+    test "finds the syndication URL for an update" do
+      assert Dolphin.Update.Github.get_metadata(
+               "2018-12-20-you-mean-setting-macros-with.md",
+               "in_reply_to"
+             ) == {:ok, "https://ruby.social/@solnic/101275229051824324"}
+    end
+  end
 end
