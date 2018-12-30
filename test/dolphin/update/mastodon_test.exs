@@ -26,6 +26,13 @@ defmodule Dolphin.Update.MastodonTest do
                })
     end
 
+    test "finds the in_reply-to_id from a local path" do
+      assert {:ok, %Mastodon{in_reply_to_id: "101275274281588324"}} =
+               Mastodon.from_update(%Update{
+                 in_reply_to: "/2018/12/20/you-mean-setting-macros-with.html"
+               })
+    end
+
     test "does not try to find  an in_reply_to_id from an empty url" do
       assert {:ok, %Mastodon{in_reply_to_id: nil}} =
                Mastodon.from_update(%Update{in_reply_to: ""})

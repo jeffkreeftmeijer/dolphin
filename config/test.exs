@@ -14,6 +14,7 @@ config :dolphin, datetime: FakeDateTime
 config :dolphin, github: FakeGithub
 config :dolphin, twitter: FakeTwitter
 config :dolphin, mastodon: FakeMastodon
+config :dolphin, http_client: FakeHTTPoison
 
 config :dolphin, :github_credentials,
   username: "jeffkreeftmeijer",

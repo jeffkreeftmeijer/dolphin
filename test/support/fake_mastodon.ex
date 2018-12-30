@@ -22,11 +22,15 @@ defmodule FakeMastodon do
     %Hunter.Result{
       accounts: [],
       hashtags: [],
-      statuses: [
-        %Hunter.Status{
-          id: "101275229107919444"
-        }
-      ]
+      statuses: [%Hunter.Status{id: "101275229107919444"}]
+    }
+  end
+
+  def search(_conn, "https://mastodon.social/@jkreeftmeijer/101275274281588324") do
+    %Hunter.Result{
+      accounts: [],
+      hashtags: [],
+      statuses: [%Hunter.Status{id: "101275274281588324"}]
     }
   end
 
