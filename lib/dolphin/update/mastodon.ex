@@ -78,7 +78,7 @@ defmodule Dolphin.Update.Mastodon do
 
   defp do_post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
        when in_reply_to_id != nil do
-    @mastodon.create_status(@conn, content, in_reply_to_status_id: in_reply_to_id)
+    @mastodon.create_status(@conn, content, in_reply_to_id: in_reply_to_id)
   end
 
   defp do_post(%Dolphin.Update.Mastodon{content: content}) do

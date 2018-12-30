@@ -96,7 +96,7 @@ defmodule Dolphin.Update.MastodonTest do
         in_reply_to_id: "101195085216392589"
       })
 
-      assert [{_, [in_reply_to_status_id: "101195085216392589"]}] = FakeMastodon.updates()
+      assert [{_, [in_reply_to_id: "101195085216392589"]}] = FakeMastodon.updates()
     end
 
     test "posts a thread to Mastodon" do
@@ -123,8 +123,8 @@ defmodule Dolphin.Update.MastodonTest do
 
       assert [
                {"Some of my" <> _, []},
-               {"While you shouldn’t" <> _, [in_reply_to_status_id: "38905"]},
-               {"The results aren’t" <> _, [in_reply_to_status_id: "48305"]}
+               {"While you shouldn’t" <> _, [in_reply_to_id: "38905"]},
+               {"The results aren’t" <> _, [in_reply_to_id: "48305"]}
              ] = FakeMastodon.updates()
     end
   end
