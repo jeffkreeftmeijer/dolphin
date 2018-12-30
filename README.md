@@ -1,19 +1,36 @@
-# Dolphin
+# Dolphin 🐬 
 
-To start your Phoenix server:
+Dolphin is a microblogging tool that intelligently converts, splits and posts updates to Twitter, Mastodon and Github.
 
-  * Install dependencies with `mix deps.get`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+“Intelligently”, because:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+1. It splits long updates into threads, so longer updates are posted to Twitter and Mastodon.
+2. It stores your updates in a Github repository, allowing you to keep an archive of all your updates yourself.
+3. It does not post replies to Tweets to Mastodon, and vice versa.
+4. It does not post Mastodon mentions to Twitter, and vice versa.
+5. It does not cross-link. If an update doesn’t fit on Twitter, it shouldn’t be posted there with a link to Mastodon.
+6. It’s a dolphin.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## How?
 
-## Learn more
+By running it yourself. You’ll need to configure these environment variables to make everything work:
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+    # Basic authentication
+    BASIC_AUTH_USERNAME
+    BASIC_AUTH_PASSWORD
+
+    # Github credentials
+    GITHUB_USERNAME
+    GITHUB_REPOSITORY
+    GITHUB_ACCESS_TOKEN
+
+    # Twitter credentials
+    TWITTER_USERNAME
+    TWITTER_CONSUMER_KEY
+    TWITTER_CONSUMER_SECRET
+    TWITTER_ACCESS_TOKEN
+    TWITTER_TOKEN_SECRET
+
+    # Mastodon credentials
+    MASTODON_BASE_URL
+    MASTODON_BEARER_TOKEN
