@@ -58,6 +58,40 @@ defmodule FrontMatter do
     document
   end
 
+  @doc ~S'''
+  Decodes a document with front matter into content and metadata.
+
+  ## Examples
+
+      iex> FrontMatter.decode(
+      ...> """
+      ...> ---
+      ...> date: 2018-12-27
+      ...> twitter: ["https://twitter.com/jkreeftmeijer/status/1075780054771060736", "https://twitter.com/jkreeftmeijer/status/1075780055907725312"]
+      ...> ---
+      ...> Decodes a document with front matter into content and metadata.
+      ...> """
+      ...> )
+      {
+        :ok,
+        %{
+          "date" => "2018-12-27",
+          "twitter" => ["https://twitter.com/jkreeftmeijer/status/1075780054771060736", "https://twitter.com/jkreeftmeijer/status/1075780055907725312"]
+        },
+        "Decodes a document with front matter into content and metadata."
+      }
+  '''
+  def decode(document) do
+    [_, front_matter, content] = String.split(document, "---\n", parts: 3)
+
+    metadata =
+      front_matter
+      |> String.trim()
+      |> decode_front_matter()
+
+    {:ok, metadata, String.trim(content)}
+  end
+
   defp do_encode(content, metadata) when metadata == %{} do
     {:ok, content <> "\n"}
   end
@@ -79,6 +113,21 @@ defmodule FrontMatter do
     }
   end
 
+  defp decode_front_matter(front_matter) do
+    front_matter
+    |> String.split("\n")
+    |> decode_front_matter(%{})
+  end
+
+  defp decode_front_matter([head | tail], acc) do
+    [key, value] = String.split(head, ": ", parts: 2)
+    decode_front_matter(tail, Map.put(acc, key, decode_value(value)))
+  end
+
+  defp decode_front_matter([], acc) do
+    acc
+  end
+
   defp value_to_string(value) when is_binary(value), do: value
   defp value_to_string(value), do: inspect(value)
 
@@ -86,4 +135,13 @@ defmodule FrontMatter do
   defp empty_value?({_, ""}), do: true
   defp empty_value?({_, []}), do: true
   defp empty_value?({_, _}), do: false
+
+  defp decode_value("[\"" <> _ = value) do
+    value
+    |> String.replace_leading("[\"", "")
+    |> String.replace_trailing("\"]", "")
+    |> String.split("\", \"", trim: true)
+  end
+
+  defp decode_value(value), do: value
 end
