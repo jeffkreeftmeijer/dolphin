@@ -10,6 +10,7 @@ config :dolphin, DolphinWeb.Endpoint,
 config :logger, level: :warn
 
 config :dolphin, date: FakeDate
+config :dolphin, datetime: FakeDateTime
 config :dolphin, github: FakeGithub
 config :dolphin, twitter: FakeTwitter
 config :dolphin, mastodon: FakeMastodon

@@ -1,8 +1,9 @@
 defmodule Dolphin.Update do
-  defstruct text: "", in_reply_to: nil, twitter: nil, mastodon: nil
+  defstruct text: "", date: nil, in_reply_to: nil, twitter: nil, mastodon: nil
   alias Dolphin.Update.{Github, Twitter, Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
+  @datetime Application.get_env(:dolphin, :datetime, DateTime)
 
   def from_params(update) do
     update
@@ -25,9 +26,19 @@ defmodule Dolphin.Update do
       end
 
     {:ok, github_links} =
-      Github.post(%{update | twitter: twitter_links, mastodon: mastodon_links})
+      Github.post(%{
+        update
+        | twitter: twitter_links,
+          mastodon: mastodon_links,
+          date: @datetime.to_iso8601(@datetime.utc_now)
+      })
 
-    {:ok, %{github: github_links, twitter: twitter_links, mastodon: mastodon_links}}
+    {:ok,
+     %{
+       github: github_links,
+       twitter: twitter_links,
+       mastodon: mastodon_links
+     }}
   end
 
   @doc ~S"""
@@ -60,16 +71,22 @@ defmodule Dolphin.Update do
       iex> Dolphin.Update.metadata(
       ...>   %Dolphin.Update{
       ...>     text: "@tbdr@twitter.com More convoluted than that, actually. 😅",
+      ...>     date: ~N[2018-12-27 15:46:23] |> DateTime.from_naive!("Etc/UTC"),
       ...>     in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208",
       ...>     twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"],
-      ...>     mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"]
+      ...>     mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"],
       ...>   }
       ...> )
-      %{in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208", twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"], mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"]}
+      %{
+        date: ~N[2018-12-27 15:46:23] |> DateTime.from_naive!("Etc/UTC"),
+        in_reply_to: "https://twitter.com/tbdr/status/1075477062360670208",
+        twitter: ["https://twitter.com/jkreeftmeijer/status/1075481362407350272"],
+        mastodon: ["https://mastodon.social/@jkreeftmeijer/101195179464343851"],
+      }
 
   """
   def metadata(update) do
-    Map.take(update, [:in_reply_to, :twitter, :mastodon])
+    Map.take(update, [:date, :in_reply_to, :twitter, :mastodon])
   end
 
   @doc ~S"""

@@ -36,6 +36,11 @@ defmodule Dolphin.UpdateTest do
       assert file =~ ~r/twitter: \["https:\/\/twitter.com\/\w+\/status\/12119"\]/
       assert file =~ ~r/mastodon: \["https:\/\/mastodon.social\/@\w+\/12119"\]/
     end
+
+    test "adds the current datetime to the github update" do
+      [file] = FakeGithub.Contents.files()
+      assert file =~ "date: 2018-12-27T15:46:23Z"
+    end
   end
 
   describe "filename/1" do
