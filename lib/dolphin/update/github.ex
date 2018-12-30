@@ -31,4 +31,24 @@ defmodule Dolphin.Update.Github do
     |> from_update
     |> post
   end
+
+  def get_metadata(path, key) do
+    filename =
+      path
+      |> String.replace("/", "-")
+      |> String.replace_trailing(".html", ".md")
+
+    {200, %{"content" => content}, _} =
+      Module.concat(@github, Contents).find(@client, @username, @repository, filename)
+
+    case content
+         |> Base.decode64!(ignore: :whitespace)
+         |> FrontMatter.decode() do
+      {:ok, %{^key => value}, _} ->
+        {:ok, value}
+
+      _ ->
+        {:error, :key_not_found}
+    end
+  end
 end

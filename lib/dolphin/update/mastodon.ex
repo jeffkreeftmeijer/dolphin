@@ -1,14 +1,11 @@
 defmodule Dolphin.Update.Mastodon do
   defstruct [:content, :in_reply_to_id, :reply]
-  alias Dolphin.{Update, Update.Split}
+  alias Dolphin.{Update, Update.Split, Update.Github}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
-  @http_client Application.get_env(:dolphin, :http_client, HTTPoison)
   @credentials Application.get_env(:dolphin, :mastodon_credentials)
   @base_url @credentials[:base_url]
   @conn Hunter.new(@credentials)
-  @github_username Application.get_env(:dolphin, :github_credentials)[:username]
-  @github_repository Application.get_env(:dolphin, :github_credentials)[:repository]
 
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Mastodon{})
@@ -22,19 +19,13 @@ defmodule Dolphin.Update.Mastodon do
   end
 
   defp from_update(%Update{in_reply_to: "/" <> path}, acc) do
-    repo_path =
-      path
-      |> String.replace("/", "-")
-      |> String.replace_trailing(".html", ".md")
+    case Github.get_metadata(path, "mastodon") do
+      {:ok, urls} ->
+        from_update(%Update{in_reply_to: List.last(urls)}, acc)
 
-    {:ok, %HTTPoison.Response{body: body}} =
-      @http_client.get(
-        "https://raw.githubusercontent.com/#{@github_username}/#{@github_repository}/master/" <>
-          repo_path
-      )
-
-    {:ok, %{"mastodon" => urls}, _} = FrontMatter.decode(body)
-    from_update(%Update{in_reply_to: List.last(urls)}, acc)
+      {:error, _} ->
+        {:error, :invalid_in_reply_to}
+    end
   end
 
   defp from_update(%Update{in_reply_to: url} = update, acc) when is_binary(url) and url != "" do

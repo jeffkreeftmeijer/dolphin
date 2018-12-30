@@ -57,6 +57,13 @@ defmodule Dolphin.Update.TwitterTest do
                })
     end
 
+    test "is invalid as a reply to a local path that wasn't posted to Twitter" do
+      assert {:error, :invalid_in_reply_to} =
+               Twitter.from_update(%Update{
+                 in_reply_to: "/2018/12/20/you-mean-setting-macros-with.html"
+               })
+    end
+
     test "is invalid with a non-Twitter mention" do
       assert {:error, :invalid_mention} =
                Twitter.from_update(%Update{
