@@ -35,7 +35,7 @@ defmodule FrontMatter do
 
       iex> FrontMatter.encode(
       ...>   "Does not include empty metadata keys in the front matter.",
-      ...>   %{date: nil, text: ""}
+      ...>   %{date: nil, text: "", twitter: []}
       ...> )
       {
         :ok,
@@ -47,7 +47,7 @@ defmodule FrontMatter do
   def encode(content, metadata) do
     filtered_metadata =
       metadata
-      |> Enum.reject(fn {_key, value} -> value in ["", nil] end)
+      |> Enum.reject(&empty_value?/1)
       |> Enum.into(%{})
 
     do_encode(content, filtered_metadata)
@@ -81,4 +81,9 @@ defmodule FrontMatter do
 
   defp value_to_string(value) when is_binary(value), do: value
   defp value_to_string(value), do: inspect(value)
+
+  defp empty_value?({_, nil}), do: true
+  defp empty_value?({_, ""}), do: true
+  defp empty_value?({_, []}), do: true
+  defp empty_value?({_, _}), do: false
 end
