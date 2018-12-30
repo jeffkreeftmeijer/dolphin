@@ -16,7 +16,9 @@ defmodule Dolphin.Update.Split do
   defp join!([head | tail], max, [previous | rest] = acc) do
     joined = previous <> "\n\n" <> head
 
-    if String.length(joined) <= max do
+    if joined
+       |> shorten_urls
+       |> String.length() <= max do
       join!(tail, max, [joined | rest])
     else
       join!(tail, max, [head | acc])
@@ -28,4 +30,8 @@ defmodule Dolphin.Update.Split do
   end
 
   defp join!([], _max, acc), do: acc
+
+  defp shorten_urls(text) do
+    Regex.replace(~r/https?:\/\/[\w\.\/-]+/, text, &String.slice(&1, 0..22))
+  end
 end

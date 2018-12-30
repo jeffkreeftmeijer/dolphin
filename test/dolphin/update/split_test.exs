@@ -49,4 +49,10 @@ defmodule Dolphin.Update.SplitTest do
 
     assert ["I *love* reinventing" <> _, "Some of my" <> _] = Split.split(text, 280)
   end
+
+  test "counts links as 23 characters" do
+    text = "https://w3.org/TR/activitypub\n\n#currentstatus"
+
+    assert [text] = Split.split(text, 40)
+  end
 end
