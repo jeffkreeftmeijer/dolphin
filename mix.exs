@@ -42,7 +42,7 @@ defmodule Dolphin.MixProject do
       {:basic_auth, "~> 2.2.2"},
       {:stream_data, "~> 0.1", only: :test},
       {:tentacat, "~> 1.0"},
-      {:extwitter, "~> 0.9"},
+      {:extwitter, github: "jeffkreeftmeijer/extwitter"},
       {:hunter, github: "jeffkreeftmeijer/hunter"}
     ]
   end

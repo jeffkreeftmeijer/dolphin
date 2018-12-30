@@ -141,5 +141,12 @@ defmodule Dolphin.Update.TwitterTest do
                {"The results aren’t" <> _, [in_reply_to_status_id: 48305]}
              ] = FakeTwitter.updates()
     end
+
+    test "uploads a file to Twitter" do
+      Twitter.post(%Twitter{content: "", media: ["file.jpg"]})
+
+      assert [{"file.jpg", "image/jpeg"}] = FakeTwitter.uploads()
+      assert [{"", [media_ids: [1_079_531_587_988_082_688]]}] = FakeTwitter.updates()
+    end
   end
 end
