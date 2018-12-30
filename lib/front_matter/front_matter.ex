@@ -53,6 +53,11 @@ defmodule FrontMatter do
     do_encode(content, filtered_metadata)
   end
 
+  def encode!(content, metadata) do
+    {:ok, document} = encode(content, metadata)
+    document
+  end
+
   defp do_encode(content, metadata) when metadata == %{} do
     {:ok, content <> "\n"}
   end
@@ -72,11 +77,6 @@ defmodule FrontMatter do
       #{content}
       """
     }
-  end
-
-  def encode!(content, metadata) do
-    {:ok, document} = encode(content, metadata)
-    document
   end
 
   defp value_to_string(value) when is_binary(value), do: value
