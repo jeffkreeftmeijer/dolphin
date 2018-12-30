@@ -33,6 +33,13 @@ defmodule Dolphin.Update.TwitterTest do
                })
     end
 
+    test "finds the in_reply-to_id from a local path" do
+      assert {:ok, %Twitter{in_reply_to_id: "1076438296782426112"}} =
+               Twitter.from_update(%Update{
+                 in_reply_to: "/2018/12/22/also-the-autowrite-and-autowriteall.html"
+               })
+    end
+
     test "does smartypants conversions" do
       assert {:ok, %Twitter{content: "I’ll start testing these tips in Vim 8."}} =
                Twitter.from_update(%Update{text: "I'll start testing these tips in Vim 8."})
