@@ -1,0 +1,9 @@
+code,kbd,pre{
+  font-family: SF Mono, Monaco, monospace;
+}
+pre{
+  background-color: ghostwhite;
+  font-size: smaller;
+  overflow: auto;
+  padding: 1em;
+}
