@@ -92,6 +92,27 @@ defmodule Dolphin.Update.TwitterTest do
                 }
               }} = Twitter.from_update(%Update{text: text})
     end
+
+    test "adds media to the update" do
+      assert {:ok, %Twitter{media: ["file.jpg"]}} =
+               Twitter.from_update(%Update{text: "![](file.jpg)", media: ["file.jpg"]})
+    end
+
+    test "removes Markdown image tags from the update" do
+      assert {:ok, %Twitter{content: "Image.\n\nThat’s all!"}} =
+               Twitter.from_update(%Update{
+                 text: "Image.\n\n![](file.jpg)\n\nThat’s all!",
+                 media: ["file.jpg"]
+               })
+    end
+
+    test "distributes media across updates" do
+      assert {:ok, %Twitter{media: ["file1.jpg"], reply: %Twitter{media: ["file2.jpg"]}}} =
+               Twitter.from_update(%Update{
+                 text: "![](file1.jpg)\n\n\n![](file2.jpg)",
+                 media: ["file1.jpg", "file2.jpg"]
+               })
+    end
   end
 
   describe "post/1" do

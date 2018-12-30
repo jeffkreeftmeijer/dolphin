@@ -30,7 +30,7 @@ defmodule Dolphin.Update.Twitter do
     end
   end
 
-  defp from_update(%Update{text: text}, acc) do
+  defp from_update(%Update{text: text, media: media}, acc) do
     case validate_mentions(text) do
       :ok ->
         update =
@@ -38,7 +38,7 @@ defmodule Dolphin.Update.Twitter do
           |> replace_mentions()
           |> Update.replace_markdown_links()
           |> Split.split(280)
-          |> from_splits(acc)
+          |> from_splits(media, acc)
 
         {:ok, update}
 
@@ -47,13 +47,26 @@ defmodule Dolphin.Update.Twitter do
     end
   end
 
-  defp from_splits(splits, update \\ %Dolphin.Update.Twitter{})
+  defp from_splits(splits, media, update \\ %Dolphin.Update.Twitter{})
 
-  defp from_splits([content | tail], update) do
-    %{update | content: content, reply: from_splits(tail)}
+  defp from_splits([content | tail], media, update) do
+    mentioned_images = Enum.filter(media, &(content =~ ~r/#{&1}/))
+
+    %{
+      update
+      | content: remove_media_image_tags(content, mentioned_images),
+        media: mentioned_images,
+        reply: from_splits(tail, media)
+    }
   end
 
-  defp from_splits([], _update), do: nil
+  defp from_splits([], _media, _update), do: nil
+
+  defp remove_media_image_tags(content, [path | tail]) do
+    remove_media_image_tags(String.replace(content, ~r/\s*!\[[^\]]*\]\(#{path}\)/, ""), tail)
+  end
+
+  defp remove_media_image_tags(content, []), do: content
 
   def post(%Dolphin.Update.Twitter{content: content, reply: reply, media: media} = update) do
     media_ids = Enum.map(media, &@twitter.upload_media(&1, MIME.from_path(&1)))
