@@ -11,7 +11,7 @@ use Mix.Config
 # before starting your production server.
 config :dolphin, DolphinWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
-  url: [scheme: "https", host: "dry-thicket-97750.herokuapp.com", port: 443],
+  url: [scheme: System.get_env("SCHEME"), host: System.get_env("HOST_NAME"), port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
