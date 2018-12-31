@@ -52,11 +52,25 @@ defmodule Dolphin.Update do
       "2018-12-27-because-ed-is-the-standard.md"
       iex> Dolphin.Update.filename(%Dolphin.Update{text: "<https://w3.org/TR/activitypub>\n\n#currentstatus"})
       "2018-12-27-https-w3-org-tr-activitypub.md"
+      iex> Dolphin.Update.filename(%Dolphin.Update{text: "String.replace(text, ~r/(?<!\!)\[([^\]]+)\]\(([^\)]+)\)/, \"\\1 (\\2)\")"})
+      "2018-12-27-string-replace-text-r-1.md"
 
   """
   def filename(%Dolphin.Update{text: text}) do
     (@date.to_iso8601(@date.utc_today) <> "-" <> text)
-    |> Dolphin.Utils.filter_characters([' ', '\n', '-', '@', '/', '.', ?a..?z, ?A..?Z, ?0..?9])
+    |> Dolphin.Utils.filter_characters([
+      ' ',
+      '\n',
+      '-',
+      '@',
+      '/',
+      '.',
+      '(',
+      ')',
+      ?a..?z,
+      ?A..?Z,
+      ?0..?9
+    ])
     |> String.downcase()
     |> String.replace(~r/@[\w\.]+/, "")
     |> String.split(~r/\W+/, trim: true)
