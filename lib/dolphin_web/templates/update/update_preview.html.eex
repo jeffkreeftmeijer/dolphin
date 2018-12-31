@@ -1,4 +1,11 @@
 <pre><%= @update.content %></pre>
+<%= if @update.media do %>
+  <ul>
+    <%= for item <- @update.media do %>
+      <li>/media/<%= item.filename %></li>
+    <% end %>
+  </ul>
+<% end %>
 
 <%= if @update.reply do %>
   <%= render "update_preview.html", %{update: @update.reply} %>
