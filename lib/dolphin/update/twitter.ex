@@ -66,7 +66,10 @@ defmodule Dolphin.Update.Twitter do
   defp from_splits([], _media, _update), do: nil
 
   defp remove_media_image_tags(content, [%{filename: filename} | tail]) do
-    remove_media_image_tags(String.replace(content, ~r/\s*!\[[^\]]*\]\(#{filename}\)/, ""), tail)
+    remove_media_image_tags(
+      String.replace(content, ~r/\s*!\[[^\]]*\]\(\/media\/#{filename}\)/, ""),
+      tail
+    )
   end
 
   defp remove_media_image_tags(content, []), do: content
