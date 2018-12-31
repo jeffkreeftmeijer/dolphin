@@ -21,7 +21,6 @@ defmodule DolphinWeb.Router do
     pipe_through :browser
 
     get "/", UpdateController, :new
-    post "/preview", UpdateController, :preview
     post "/", UpdateController, :create
   end
 

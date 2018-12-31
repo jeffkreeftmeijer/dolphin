@@ -12,9 +12,3 @@
 
 <h2>Github</h2>
 <pre><%= @github.content %></pre>
-
-<%= form_for @conn, Routes.update_path(@conn, :create), [as: :update], fn f -> %>
-  <%= hidden_input f, :in_reply_to %>
-  <%= hidden_input f, :text %>
-  <%= submit "Post!" %>
-<% end %>

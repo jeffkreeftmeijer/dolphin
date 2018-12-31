@@ -1,6 +1,6 @@
 <h1>New Update</h1>
 
-<%= form_for @conn, Routes.update_path(@conn, :preview), [as: :update], fn f -> %>
+<%= form_for @conn, Routes.update_path(@conn, :create), [as: :update], fn f -> %>
 <p>
   <%= label f, :in_reply_to %>
   <%= text_input f, :in_reply_to %>
@@ -11,7 +11,8 @@
   <%= textarea f, :text, rows: 10 %>
 </p>
 
-<p>
-  <%= submit "Preview!" %>
+<p style="display: flex; justify-content: space-between;">
+  <%= submit "Preview", name: "preview" %>
+  <%= submit "Post", name: "post" %>
 </p>
 <% end %>

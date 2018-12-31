@@ -6,7 +6,7 @@ defmodule DolphinWeb.UpdateController do
     render(conn, "new.html")
   end
 
-  def preview(conn, %{"update" => update_params}) do
+  def create(conn, %{"preview" => _, "update" => update_params}) do
     update = Dolphin.Update.from_params(update_params)
 
     github = Dolphin.Update.Github.from_update(update)
