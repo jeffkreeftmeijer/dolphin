@@ -113,7 +113,7 @@ defmodule Dolphin.Update.TwitterTest do
 
       assert {:ok, %Twitter{content: "Image.\n\nThat’s all!"}} =
                Twitter.from_update(%Update{
-                 text: "Image.\n\n![](/media/file.jpg)\n\nThat’s all!",
+                 text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
                  media: [upload]
                })
     end
