@@ -50,7 +50,10 @@ defmodule Dolphin.Update.Twitter do
   defp from_splits(splits, media, update \\ %Dolphin.Update.Twitter{})
 
   defp from_splits([content | tail], media, update) do
-    mentioned_images = Enum.filter(media, &(content =~ ~r/#{&1}/))
+    mentioned_images =
+      Enum.filter(media, fn upload ->
+        content =~ upload.filename
+      end)
 
     %{
       update
@@ -62,14 +65,14 @@ defmodule Dolphin.Update.Twitter do
 
   defp from_splits([], _media, _update), do: nil
 
-  defp remove_media_image_tags(content, [path | tail]) do
-    remove_media_image_tags(String.replace(content, ~r/\s*!\[[^\]]*\]\(#{path}\)/, ""), tail)
+  defp remove_media_image_tags(content, [%{filename: filename} | tail]) do
+    remove_media_image_tags(String.replace(content, ~r/\s*!\[[^\]]*\]\(#{filename}\)/, ""), tail)
   end
 
   defp remove_media_image_tags(content, []), do: content
 
   def post(%Dolphin.Update.Twitter{content: content, reply: reply, media: media} = update) do
-    media_ids = Enum.map(media, &@twitter.upload_media(&1, MIME.from_path(&1)))
+    media_ids = Enum.map(media, &@twitter.upload_media(&1.path, &1.content_type))
     %{id: id} = @twitter.update(content, post_options(%{update | media_ids: media_ids}))
 
     reply_urls =
