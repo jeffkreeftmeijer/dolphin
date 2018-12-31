@@ -43,7 +43,6 @@ defmodule Dolphin.Update.Mastodon do
       :ok ->
         update =
           text
-          |> Smarty.convert!()
           |> Update.replace_markdown_links()
           |> Split.split(500)
           |> from_splits(acc)

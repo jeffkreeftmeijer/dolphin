@@ -36,7 +36,6 @@ defmodule Dolphin.Update.Twitter do
         update =
           text
           |> replace_mentions()
-          |> Smarty.convert!()
           |> Update.replace_markdown_links()
           |> Split.split(280)
           |> from_splits(acc)

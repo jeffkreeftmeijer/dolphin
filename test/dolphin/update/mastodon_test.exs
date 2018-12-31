@@ -38,11 +38,6 @@ defmodule Dolphin.Update.MastodonTest do
                Mastodon.from_update(%Update{in_reply_to: ""})
     end
 
-    test "does smartypants conversions" do
-      assert {:ok, %Mastodon{content: "I’ll start testing these tips in Vim 8."}} =
-               Mastodon.from_update(%Update{text: "I'll start testing these tips in Vim 8."})
-    end
-
     test "replaces markdown links" do
       assert {:ok, %Mastodon{content: "Mastodon (https://mastodon.social)"}} =
                Mastodon.from_update(%Update{text: "[Mastodon](https://mastodon.social)"})

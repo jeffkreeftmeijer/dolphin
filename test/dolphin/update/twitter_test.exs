@@ -40,11 +40,6 @@ defmodule Dolphin.Update.TwitterTest do
                })
     end
 
-    test "does smartypants conversions" do
-      assert {:ok, %Twitter{content: "I’ll start testing these tips in Vim 8."}} =
-               Twitter.from_update(%Update{text: "I'll start testing these tips in Vim 8."})
-    end
-
     test "replaces markdown links" do
       assert {:ok, %Twitter{content: "Mastodon (https://mastodon.social)"}} =
                Twitter.from_update(%Update{text: "[Mastodon](https://mastodon.social)"})
