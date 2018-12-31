@@ -1,10 +1,14 @@
 defmodule FakeMastodon do
   def start_link() do
-    Agent.start_link(fn -> %{updates: []} end, name: __MODULE__)
+    Agent.start_link(fn -> %{updates: [], uploads: []} end, name: __MODULE__)
   end
 
   def updates do
     Agent.get(__MODULE__, &Map.get(&1, :updates))
+  end
+
+  def uploads do
+    Agent.get(__MODULE__, &Map.get(&1, :uploads))
   end
 
   def create_status(_conn, status, options \\ []) do
@@ -16,6 +20,16 @@ defmodule FakeMastodon do
 
     id = id(status)
     %{id: "#{id}", url: "https://mastodon.social/@jkreeftmeijer/#{id}"}
+  end
+
+  def upload_media(_conn, path) do
+    if Process.whereis(__MODULE__) do
+      Agent.update(__MODULE__, fn %{uploads: uploads} = state ->
+        %{state | uploads: uploads ++ [path]}
+      end)
+    end
+
+    %Hunter.Attachment{id: "9569296"}
   end
 
   def search(_conn, "https://ruby.social/@solnic/101275229051824324") do

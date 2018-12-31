@@ -1,5 +1,5 @@
 defmodule Dolphin.Update.Mastodon do
-  defstruct [:content, :in_reply_to_id, :reply]
+  defstruct content: nil, in_reply_to_id: nil, reply: nil, media: [], media_ids: []
   alias Dolphin.{Update, Update.Split, Update.Github}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
@@ -62,8 +62,15 @@ defmodule Dolphin.Update.Mastodon do
 
   defp from_splits([], _update), do: nil
 
-  def post(%Dolphin.Update.Mastodon{reply: reply} = update) do
-    %{id: id, url: url} = do_post(update)
+  def post(%Dolphin.Update.Mastodon{content: content, reply: reply, media: media} = update) do
+    media_ids =
+      Enum.map(media, fn item ->
+        %Hunter.Attachment{id: id} = @mastodon.upload_media(@conn, item.path)
+        id
+      end)
+
+    %{id: id, url: url} =
+      @mastodon.create_status(@conn, content, post_options(%{update | media_ids: media_ids}))
 
     reply_urls =
       case reply do
@@ -85,14 +92,27 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp do_post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
-       when in_reply_to_id != nil do
-    @mastodon.create_status(@conn, content, in_reply_to_id: in_reply_to_id)
+  defp post_options(update) do
+    post_options(update, [])
   end
 
-  defp do_post(%Dolphin.Update.Mastodon{content: content}) do
-    @mastodon.create_status(@conn, content)
+  defp post_options(%Dolphin.Update.Mastodon{in_reply_to_id: in_reply_to_id} = update, options)
+       when in_reply_to_id != nil do
+    post_options(
+      Map.drop(update, [:in_reply_to_id]),
+      Keyword.put(options, :in_reply_to_id, in_reply_to_id)
+    )
   end
+
+  defp post_options(%Dolphin.Update.Mastodon{media_ids: media_ids} = update, options)
+       when media_ids != [] do
+    post_options(
+      Map.drop(update, [:media_ids]),
+      Keyword.put(options, :media_ids, media_ids)
+    )
+  end
+
+  defp post_options(_, options), do: options
 
   defp validate_mentions(text) do
     if(Regex.match?(~r/\@.+@twitter.com/, text)) do

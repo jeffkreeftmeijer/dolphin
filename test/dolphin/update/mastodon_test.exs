@@ -134,5 +134,18 @@ defmodule Dolphin.Update.MastodonTest do
                {"The results aren’t" <> _, [in_reply_to_id: "48305"]}
              ] = FakeMastodon.updates()
     end
+
+    test "uploads a file to Mastodon" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      Mastodon.post(%Mastodon{content: "", media: [upload]})
+
+      assert ["test/file.jpg"] = FakeMastodon.uploads()
+      assert [{"", [media_ids: ["9569296"]]}] = FakeMastodon.updates()
+    end
   end
 end
