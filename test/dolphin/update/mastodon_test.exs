@@ -79,6 +79,53 @@ defmodule Dolphin.Update.MastodonTest do
                 reply: %Mastodon{content: "The results aren’t" <> _}
               }} = Mastodon.from_update(%Update{text: text})
     end
+
+    test "adds media to the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Mastodon{media: [upload]}} =
+               Mastodon.from_update(%Update{text: "![](file.jpg)", media: [upload]})
+    end
+
+    test "removes Markdown image tags from the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Mastodon{content: "Image.\n\nThat’s all!"}} =
+               Mastodon.from_update(%Update{
+                 text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+                 media: [upload]
+               })
+    end
+
+    test "distributes media across updates" do
+      uploads =
+        [upload_1, upload_2] = [
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file1.jpg",
+            path: "test/file1.jpg"
+          },
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file2.jpg",
+            path: "test/file2.jpg"
+          }
+        ]
+
+      assert {:ok, %Mastodon{media: [^upload_1], reply: %Mastodon{media: [^upload_2]}}} =
+               Mastodon.from_update(%Update{
+                 text: "![](file1.jpg)\n\n\n![](file2.jpg)",
+                 media: uploads
+               })
+    end
   end
 
   describe "post/1" do

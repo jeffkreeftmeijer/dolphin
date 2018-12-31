@@ -38,14 +38,14 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp from_update(%Update{text: text}, acc) do
+  defp from_update(%Update{text: text, media: media}, acc) do
     case validate_mentions(text) do
       :ok ->
         update =
           text
           |> Update.replace_markdown_links()
           |> Split.split(500)
-          |> from_splits(acc)
+          |> from_splits(media, acc)
 
         {:ok, update}
 
@@ -54,13 +54,32 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp from_splits(splits, update \\ %Dolphin.Update.Mastodon{})
+  defp from_splits(splits, media, update \\ %Dolphin.Update.Mastodon{})
 
-  defp from_splits([content | tail], update) do
-    %{update | content: content, reply: from_splits(tail)}
+  defp from_splits([content | tail], media, update) do
+    mentioned_images =
+      Enum.filter(media, fn upload ->
+        content =~ upload.filename
+      end)
+
+    %{
+      update
+      | content: remove_media_image_tags(content, mentioned_images),
+        media: mentioned_images,
+        reply: from_splits(tail, media)
+    }
   end
 
-  defp from_splits([], _update), do: nil
+  defp from_splits([], _media, _update), do: nil
+
+  defp remove_media_image_tags(content, [%{filename: filename} | tail]) do
+    remove_media_image_tags(
+      String.replace(content, ~r/\s*!\[[^\]]*\]\(\/media\/#{filename}\)/, ""),
+      tail
+    )
+  end
+
+  defp remove_media_image_tags(content, []), do: content
 
   def post(%Dolphin.Update.Mastodon{content: content, reply: reply, media: media} = update) do
     media_ids =
