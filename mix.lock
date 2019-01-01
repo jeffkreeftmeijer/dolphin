@@ -9,7 +9,7 @@
   "gettext": {:hex, :gettext, "0.16.1", "e2130b25eebcbe02bb343b119a07ae2c7e28bd4b146c4a154da2ffb2b3507af2", [:mix], [], "hexpm"},
   "hackney": {:hex, :hackney, "1.6.6", "5564b4695d48fd87859e9df77a7fa4b4d284d24519f0cd7cc898f09e8fbdc8a3", [:rebar3], [{:certifi, "1.0.0", [hex: :certifi, repo: "hexpm", optional: false]}, {:idna, "4.0.0", [hex: :idna, repo: "hexpm", optional: false]}, {:metrics, "1.0.1", [hex: :metrics, repo: "hexpm", optional: false]}, {:mimerl, "1.0.2", [hex: :mimerl, repo: "hexpm", optional: false]}, {:ssl_verify_fun, "1.1.1", [hex: :ssl_verify_fun, repo: "hexpm", optional: false]}], "hexpm"},
   "httpoison": {:hex, :httpoison, "0.10.0", "4727b3a5e57e9a4ff168a3c2883e20f1208103a41bccc4754f15a9366f49b676", [:mix], [{:hackney, "~> 1.6.3", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm"},
-  "hunter": {:git, "https://github.com/jeffkreeftmeijer/hunter.git", "1a2f3dc963ff3b11f118dfe597438135bab0cf7f", []},
+  "hunter": {:git, "https://github.com/jeffkreeftmeijer/hunter.git", "204189c5df347698715ce88d47e87cd430024c99", []},
   "idna": {:hex, :idna, "4.0.0", "10aaa9f79d0b12cf0def53038547855b91144f1bfcc0ec73494f38bb7b9c4961", [:rebar3], [], "hexpm"},
   "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
   "jsx": {:hex, :jsx, "2.8.3", "a05252d381885240744d955fbe3cf810504eb2567164824e19303ea59eef62cf", [:mix, :rebar3], [], "hexpm"},
