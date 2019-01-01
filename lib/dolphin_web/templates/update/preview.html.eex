@@ -12,3 +12,16 @@
 
 <h2>Github</h2>
 <pre><%= @github.content %></pre>
+<dl>
+  <dt>filename</dt>
+  <dd><%= @github.filename %></dd>
+
+  <%= if Enum.any?(@github.media) do %>
+    <dt>media</dt>
+    <dd>
+      <%= for item <- @github.media do %>
+        <li>/media/<%= item.filename %></li>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>

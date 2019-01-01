@@ -1,5 +1,5 @@
 defmodule Dolphin.Update.Github do
-  defstruct [:content, :filename]
+  defstruct content: nil, filename: nil, media: []
   alias Dolphin.Update
 
   @github Application.get_env(:dolphin, :github, Tentacat)
@@ -13,23 +13,29 @@ defmodule Dolphin.Update.Github do
 
     %Dolphin.Update.Github{
       filename: Update.filename(update),
-      content: FrontMatter.encode!(text, metadata)
+      content: FrontMatter.encode!(text, metadata),
+      media: update.media
     }
   end
 
-  def post(%Dolphin.Update.Github{filename: filename, content: content}) do
-    body = %{"content" => Base.encode64(content), message: "Add " <> filename}
-
-    {201, %{"content" => %{"_links" => %{"html" => link}}}, _response} =
-      Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
-
-    {:ok, [link]}
+  def post(%Dolphin.Update.Github{filename: filename, content: content, media: media}) do
+    Enum.each(media, &do_post("media/" <> &1.filename, File.read!(&1.path)))
+    do_post(filename, content)
   end
 
   def post(%Update{} = update) do
     update
     |> from_update
     |> post
+  end
+
+  defp do_post(filename, content) do
+    body = %{"content" => Base.encode64(content), message: "Add " <> filename}
+
+    {201, %{"content" => %{"_links" => %{"html" => link}}}, _response} =
+      Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
+
+    {:ok, [link]}
   end
 
   def get_metadata(path, key) do

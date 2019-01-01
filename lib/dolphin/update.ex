@@ -1,5 +1,5 @@
 defmodule Dolphin.Update do
-  defstruct text: "", date: nil, in_reply_to: nil, twitter: nil, mastodon: nil
+  defstruct text: "", date: nil, in_reply_to: nil, twitter: nil, mastodon: nil, media: []
   alias Dolphin.Update.{Github, Twitter, Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
@@ -114,11 +114,13 @@ defmodule Dolphin.Update do
       "https://mastodon.social/@jkreeftmeijer/101236371751163533"
       iex> Dolphin.Update.replace_markdown_links("[Mastodon](https://mastodon.social)")
       "Mastodon (https://mastodon.social)"
+      iex> Dolphin.Update.replace_markdown_links("![An image.](file.jpg)")
+      "![An image.](file.jpg)"
 
   """
   def replace_markdown_links(update) do
     update
     |> String.replace(~r/\<(http[^>]+)\>/, "\\1")
-    |> String.replace(~r/\[([^\]]+)\]\(([^\)]+)\)/, "\\1 (\\2)")
+    |> String.replace(~r/(?<!\!)\[([^\]]+)\]\(([^\)]+)\)/, "\\1 (\\2)")
   end
 end

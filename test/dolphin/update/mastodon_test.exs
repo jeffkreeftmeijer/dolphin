@@ -79,6 +79,53 @@ defmodule Dolphin.Update.MastodonTest do
                 reply: %Mastodon{content: "The results aren’t" <> _}
               }} = Mastodon.from_update(%Update{text: text})
     end
+
+    test "adds media to the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Mastodon{media: [{upload, "A file."}]}} =
+               Mastodon.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
+    end
+
+    test "removes Markdown image tags from the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Mastodon{content: "Image.\n\nThat’s all!"}} =
+               Mastodon.from_update(%Update{
+                 text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+                 media: [upload]
+               })
+    end
+
+    test "distributes media across updates" do
+      uploads =
+        [upload_1, upload_2] = [
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file1.jpg",
+            path: "test/file1.jpg"
+          },
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file2.jpg",
+            path: "test/file2.jpg"
+          }
+        ]
+
+      assert {:ok, %Mastodon{media: [{^upload_1, _}], reply: %Mastodon{media: [{^upload_2, _}]}}} =
+               Mastodon.from_update(%Update{
+                 text: "![](/media/file1.jpg)\n\n\n![](/media/file2.jpg)",
+                 media: uploads
+               })
+    end
   end
 
   describe "post/1" do
@@ -133,6 +180,19 @@ defmodule Dolphin.Update.MastodonTest do
                {"While you shouldn’t" <> _, [in_reply_to_id: "38905"]},
                {"The results aren’t" <> _, [in_reply_to_id: "48305"]}
              ] = FakeMastodon.updates()
+    end
+
+    test "uploads a file to Mastodon" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      Mastodon.post(%Mastodon{content: "", media: [{upload, "A file."}]})
+
+      assert [{"test/file.jpg", "A file."}] = FakeMastodon.uploads()
+      assert [{"", [media_ids: ["9569296"]]}] = FakeMastodon.updates()
     end
   end
 end

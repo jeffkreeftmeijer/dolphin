@@ -92,6 +92,53 @@ defmodule Dolphin.Update.TwitterTest do
                 }
               }} = Twitter.from_update(%Update{text: text})
     end
+
+    test "adds media to the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Twitter{media: [{upload, "A file."}]}} =
+               Twitter.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
+    end
+
+    test "removes Markdown image tags from the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      assert {:ok, %Twitter{content: "Image.\n\nThat’s all!"}} =
+               Twitter.from_update(%Update{
+                 text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+                 media: [upload]
+               })
+    end
+
+    test "distributes media across updates" do
+      uploads =
+        [upload_1, upload_2] = [
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file1.jpg",
+            path: "test/file1.jpg"
+          },
+          %Plug.Upload{
+            content_type: "image/jpeg",
+            filename: "file2.jpg",
+            path: "test/file2.jpg"
+          }
+        ]
+
+      assert {:ok, %Twitter{media: [{^upload_1, _}], reply: %Twitter{media: [{^upload_2, _}]}}} =
+               Twitter.from_update(%Update{
+                 text: "![](/media/file1.jpg)\n\n\n![](/media/file2.jpg)",
+                 media: uploads
+               })
+    end
   end
 
   describe "post/1" do
@@ -140,6 +187,19 @@ defmodule Dolphin.Update.TwitterTest do
                {"While you shouldn’t" <> _, [in_reply_to_status_id: 38905]},
                {"The results aren’t" <> _, [in_reply_to_status_id: 48305]}
              ] = FakeTwitter.updates()
+    end
+
+    test "uploads a file to Twitter" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "file.jpg",
+        path: "test/file.jpg"
+      }
+
+      Twitter.post(%Twitter{content: "", media: [{upload, "A file."}]})
+
+      assert [{"test/file.jpg", "image/jpeg"}] = FakeTwitter.uploads()
+      assert [{"", [media_ids: [1_079_531_587_988_082_688]]}] = FakeTwitter.updates()
     end
   end
 end

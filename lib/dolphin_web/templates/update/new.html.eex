@@ -1,6 +1,6 @@
 <h1>New Update</h1>
 
-<%= form_for @conn, Routes.update_path(@conn, :create), [as: :update], fn f -> %>
+<%= form_for @conn, Routes.update_path(@conn, :create), [as: :update, multipart: true], fn f -> %>
 <p>
   <%= label f, :in_reply_to %>
   <%= text_input f, :in_reply_to %>
@@ -11,8 +11,32 @@
   <%= textarea f, :text, rows: 10 %>
 </p>
 
+<p>
+  <%= label f, :media %>
+  <%= file_input f, :media, multiple: :multiple %>
+  <div id="filenames"></div>
+</p>
+
 <p style="display: flex; justify-content: space-between;">
   <%= submit "Preview", name: "preview" %>
   <%= submit "Post", name: "post" %>
 </p>
 <% end %>
+
+<script type="text/javascript">
+  document.getElementById('update_media').addEventListener("change", function(){
+    let list = document.createElement('ul')
+    let filenames = document.getElementById('filenames')
+
+    for(i = 0; i < this.files.length; i++) {
+      let element = document.createElement('li')
+      element.innerText = '![](/media/' + this.files[i].name + ')'
+      list.appendChild(element)
+    }
+
+    if(child = filenames.firstChild) {
+      filenames.removeChild(child)
+    }
+    filenames.appendChild(list);
+  })
+</script>

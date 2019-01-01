@@ -48,7 +48,7 @@ defmodule FakeGithub.Contents do
     if Process.whereis(__MODULE__) do
       Agent.update(__MODULE__, fn %{files: files} = state ->
         {:ok, content} = Base.decode64(body["content"])
-        %{state | files: [content | files]}
+        %{state | files: [{filename, content} | files]}
       end)
     end
 

@@ -1,5 +1,5 @@
 defmodule Dolphin.Update.Mastodon do
-  defstruct [:content, :in_reply_to_id, :reply]
+  defstruct content: nil, in_reply_to_id: nil, reply: nil, media: [], media_ids: []
   alias Dolphin.{Update, Update.Split, Update.Github}
 
   @mastodon Application.get_env(:dolphin, :mastodon, Hunter)
@@ -38,14 +38,14 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp from_update(%Update{text: text}, acc) do
+  defp from_update(%Update{text: text, media: media}, acc) do
     case validate_mentions(text) do
       :ok ->
         update =
           text
           |> Update.replace_markdown_links()
           |> Split.split(500)
-          |> from_splits(acc)
+          |> from_splits(media, acc)
 
         {:ok, update}
 
@@ -54,16 +54,52 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp from_splits(splits, update \\ %Dolphin.Update.Mastodon{})
+  defp from_splits(splits, media, update \\ %Dolphin.Update.Mastodon{})
 
-  defp from_splits([content | tail], update) do
-    %{update | content: content, reply: from_splits(tail)}
+  defp from_splits([content | tail], media, update) do
+    mentioned_images =
+      ~r/!\[([^\]]*)]\(([^\)]+)\)/
+      |> Regex.scan(content)
+      |> Enum.map(fn [_match, alt, filename] ->
+        upload =
+          Enum.find(media, fn item ->
+            "/media/" <> item.filename == filename
+          end)
+
+        {upload, alt}
+      end)
+      |> Enum.reject(fn {upload, _description} -> upload == nil end)
+
+    %{
+      update
+      | content: remove_media_image_tags(content, mentioned_images),
+        media: mentioned_images,
+        reply: from_splits(tail, media)
+    }
   end
 
-  defp from_splits([], _update), do: nil
+  defp from_splits([], _media, _update), do: nil
 
-  def post(%Dolphin.Update.Mastodon{reply: reply} = update) do
-    %{id: id, url: url} = do_post(update)
+  defp remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
+    remove_media_image_tags(
+      String.replace(content, ~r/\s*!\[[^\]]*\]\(\/media\/#{filename}\)/, ""),
+      tail
+    )
+  end
+
+  defp remove_media_image_tags(content, []), do: content
+
+  def post(%Dolphin.Update.Mastodon{content: content, reply: reply, media: media} = update) do
+    media_ids =
+      Enum.map(media, fn {item, description} ->
+        %Hunter.Attachment{id: id} =
+          @mastodon.upload_media(@conn, item.path, description: description)
+
+        id
+      end)
+
+    %{id: id, url: url} =
+      @mastodon.create_status(@conn, content, post_options(%{update | media_ids: media_ids}))
 
     reply_urls =
       case reply do
@@ -85,14 +121,27 @@ defmodule Dolphin.Update.Mastodon do
     end
   end
 
-  defp do_post(%Dolphin.Update.Mastodon{content: content, in_reply_to_id: in_reply_to_id})
-       when in_reply_to_id != nil do
-    @mastodon.create_status(@conn, content, in_reply_to_id: in_reply_to_id)
+  defp post_options(update) do
+    post_options(update, [])
   end
 
-  defp do_post(%Dolphin.Update.Mastodon{content: content}) do
-    @mastodon.create_status(@conn, content)
+  defp post_options(%Dolphin.Update.Mastodon{in_reply_to_id: in_reply_to_id} = update, options)
+       when in_reply_to_id != nil do
+    post_options(
+      Map.drop(update, [:in_reply_to_id]),
+      Keyword.put(options, :in_reply_to_id, in_reply_to_id)
+    )
   end
+
+  defp post_options(%Dolphin.Update.Mastodon{media_ids: media_ids} = update, options)
+       when media_ids != [] do
+    post_options(
+      Map.drop(update, [:media_ids]),
+      Keyword.put(options, :media_ids, media_ids)
+    )
+  end
+
+  defp post_options(_, options), do: options
 
   defp validate_mentions(text) do
     if(Regex.match?(~r/\@.+@twitter.com/, text)) do
