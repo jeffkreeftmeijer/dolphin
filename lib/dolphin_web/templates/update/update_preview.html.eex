@@ -1,11 +1,18 @@
 <pre><%= @update.content %></pre>
-<%= if @update.media do %>
-  <ul>
-    <%= for item <- @update.media do %>
-      <li>/media/<%= item.filename %></li>
-    <% end %>
-  </ul>
+<dl>
+<%= if @update.in_reply_to_id do %>
+  <dt>in_reply_to_id</dt>
+  <dd><%= @update.in_reply_to_id %></dd>
 <% end %>
+<%= if Enum.any?(@update.media) do %>
+  <dt>media</dt>
+  <dd>
+    <%= for {item, description} <- @update.media do %>
+      <li>/media/<%= item.filename %> (<%= description %>)</li>
+    <% end %>
+</dd>
+<% end %>
+</dl>
 
 <%= if @update.reply do %>
   <%= render "update_preview.html", %{update: @update.reply} %>
