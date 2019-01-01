@@ -57,6 +57,25 @@ defmodule Dolphin.Update.GithubTest do
                {"2018-12-27-man-ed-currentstatus.md", "$ man ed\n\n#currentstatus\n"}
              ]
     end
+
+    test "uploads media attachments to Github" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "screenshot.png",
+        path: "test/screenshot.png"
+      }
+
+      Github.post(%Github{
+        content: "![Screenshot](/media/file.jpg)",
+        filename: "2018-12-27-screenshot.png",
+        media: [upload]
+      })
+
+      upload_contents = File.read!("test/screenshot.png")
+
+      assert [{_filename, _content}, {"media/screenshot.png", ^upload_contents}] =
+               FakeGithub.Contents.files()
+    end
   end
 
   describe "get_metadata/2" do
