@@ -196,10 +196,11 @@ defmodule Dolphin.Update.TwitterTest do
         path: "test/file.jpg"
       }
 
-      Twitter.post(%Twitter{content: "", media: [upload]})
+      Twitter.post(%Twitter{content: "", media: [{upload, "A file."}]})
 
       assert [{"test/file.jpg", "image/jpeg"}] = FakeTwitter.uploads()
       assert [{"", [media_ids: [1_079_531_587_988_082_688]]}] = FakeTwitter.updates()
+      assert [{1_079_531_587_988_082_688, "A file."}] = FakeTwitter.alts()
     end
   end
 end

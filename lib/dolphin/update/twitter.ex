@@ -75,7 +75,13 @@ defmodule Dolphin.Update.Twitter do
   defp remove_media_image_tags(content, []), do: content
 
   def post(%Dolphin.Update.Twitter{content: content, reply: reply, media: media} = update) do
-    media_ids = Enum.map(media, &@twitter.upload_media(&1.path, &1.content_type))
+    media_ids =
+      Enum.map(media, fn {item, description} ->
+        id = @twitter.upload_media(item.path, item.content_type)
+        @twitter.set_media_alt(id, description)
+        id
+      end)
+
     %{id: id} = @twitter.update(content, post_options(%{update | media_ids: media_ids}))
 
     reply_urls =
