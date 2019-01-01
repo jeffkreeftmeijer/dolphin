@@ -1,18 +1,18 @@
 defmodule Dolphin.Update do
   defstruct text: "", date: nil, in_reply_to: nil, twitter: nil, mastodon: nil, media: []
-  alias Dolphin.Update.{Github, Twitter, Mastodon}
+  alias Dolphin.{Update, Update.Github, Update.Twitter, Update.Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
   @datetime Application.get_env(:dolphin, :datetime, DateTime)
 
   def from_params(update) do
     update
-    |> Enum.reduce(%Dolphin.Update{}, fn {key, value}, acc ->
+    |> Enum.reduce(%Update{}, fn {key, value}, acc ->
       Map.put(acc, String.to_existing_atom(key), value)
     end)
   end
 
-  def post(%Dolphin.Update{} = update) do
+  def post(%Update{} = update) do
     twitter_links =
       case Twitter.post(update) do
         {:ok, links} -> links
@@ -56,7 +56,7 @@ defmodule Dolphin.Update do
       "2018-12-27-string-replace-text-r-1.md"
 
   """
-  def filename(%Dolphin.Update{text: text}) do
+  def filename(%Update{text: text}) do
     (@date.to_iso8601(@date.utc_today) <> "-" <> text)
     |> Dolphin.Utils.filter_characters([
       ' ',
