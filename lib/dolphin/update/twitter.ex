@@ -65,22 +65,13 @@ defmodule Dolphin.Update.Twitter do
 
     %{
       update
-      | content: remove_media_image_tags(content, mentioned_images),
+      | content: Update.remove_media_image_tags(content, mentioned_images),
         media: mentioned_images,
         reply: from_splits(tail, media)
     }
   end
 
   defp from_splits([], _media, _update), do: nil
-
-  defp remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
-    remove_media_image_tags(
-      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{filename}\)/, ""),
-      tail
-    )
-  end
-
-  defp remove_media_image_tags(content, []), do: content
 
   def post(%Dolphin.Update.Twitter{content: content, reply: reply, media: media} = update) do
     media_ids =

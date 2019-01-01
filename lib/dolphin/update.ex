@@ -123,4 +123,25 @@ defmodule Dolphin.Update do
     |> String.replace(~r/\<(http[^>]+)\>/, "\\1")
     |> String.replace(~r/(?<!\!)\[([^\]]+)\]\(([^\)]+)\)/, "\\1 (\\2)")
   end
+
+  @doc ~S"""
+  Removes markdown image tags matching media uploads.
+
+  ## Example
+
+      iex> Dolphin.Update.remove_media_image_tags(
+      ...>   "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+      ...>   [{%Plug.Upload{filename: "file.jpg"}, "A file."}]
+      ...> )
+      "Image.\n\nThat’s all!"
+
+  """
+  def remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
+    remove_media_image_tags(
+      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{filename}\)/, ""),
+      tail
+    )
+  end
+
+  def remove_media_image_tags(content, []), do: content
 end
