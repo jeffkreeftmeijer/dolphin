@@ -13,7 +13,8 @@ defmodule Dolphin.Update.Github do
 
     %Dolphin.Update.Github{
       filename: Update.filename(update),
-      content: FrontMatter.encode!(text, metadata)
+      content: FrontMatter.encode!(text, metadata),
+      media: update.media
     }
   end
 

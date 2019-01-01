@@ -39,6 +39,17 @@ defmodule Dolphin.Update.GithubTest do
                  """
                }
     end
+
+    test "creates a Github update with media an Update" do
+      assert %Github{
+               content: "Well, that escalated.\n",
+               media: [%Plug.Upload{path: "test/screenshot.png", filename: "screenshot.png"}]
+             } =
+               Github.from_update(%Update{
+                 text: "Well, that escalated.",
+                 media: [%Plug.Upload{path: "test/screenshot.png", filename: "screenshot.png"}]
+               })
+    end
   end
 
   describe "post/1" do

@@ -67,5 +67,20 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert response =~
                "https://github.com/jeffkreeftmeijer/updates/blob/master/2018-12-27-because-ed-is-the-standard.md"
     end
+
+    test "adds uploaded files", %{conn: conn} do
+      conn =
+        post(conn, Routes.update_path(conn, :create),
+          update: %{
+            text: "Well, that escalated.",
+            media: [%Plug.Upload{path: "test/screenshot.png", filename: "screenshot.png"}]
+          }
+        )
+
+      assert response = html_response(conn, 200)
+      assert response =~ "Update posted succesfully"
+
+      [_, {"media/screenshot.png", _}] = FakeGithub.Contents.files()
+    end
   end
 end
