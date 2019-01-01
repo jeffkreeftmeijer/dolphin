@@ -87,8 +87,8 @@ defmodule Dolphin.Update.MastodonTest do
         path: "test/file.jpg"
       }
 
-      assert {:ok, %Mastodon{media: [upload]}} =
-               Mastodon.from_update(%Update{text: "![](file.jpg)", media: [upload]})
+      assert {:ok, %Mastodon{media: [{upload, "A file."}]}} =
+               Mastodon.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
     end
 
     test "removes Markdown image tags from the update" do
@@ -120,9 +120,9 @@ defmodule Dolphin.Update.MastodonTest do
           }
         ]
 
-      assert {:ok, %Mastodon{media: [^upload_1], reply: %Mastodon{media: [^upload_2]}}} =
+      assert {:ok, %Mastodon{media: [{^upload_1, _}], reply: %Mastodon{media: [{^upload_2, _}]}}} =
                Mastodon.from_update(%Update{
-                 text: "![](file1.jpg)\n\n\n![](file2.jpg)",
+                 text: "![](/media/file1.jpg)\n\n\n![](/media/file2.jpg)",
                  media: uploads
                })
     end
