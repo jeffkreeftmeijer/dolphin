@@ -52,7 +52,10 @@ defmodule Dolphin.Update.GithubTest do
         "https://github.com/#{@username}/#{@repository}/blob/master/2018-12-27-man-ed-currentstatus.md"
 
       assert Github.post(update) == {:ok, [expected_url]}
-      assert FakeGithub.Contents.files() == ["$ man ed\n\n#currentstatus\n"]
+
+      assert FakeGithub.Contents.files() == [
+               {"2018-12-27-man-ed-currentstatus.md", "$ man ed\n\n#currentstatus\n"}
+             ]
     end
   end
 

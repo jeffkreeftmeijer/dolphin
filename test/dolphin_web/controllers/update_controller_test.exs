@@ -35,8 +35,8 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert response = html_response(conn, 200)
       assert response =~ "Update posted succesfully"
 
-      [file] = FakeGithub.Contents.files()
-      assert file =~ ~r/\$ man ed\n\n#currentstatus\n/
+      [{_filename, content}] = FakeGithub.Contents.files()
+      assert content =~ ~r/\$ man ed\n\n#currentstatus\n/
 
       assert response =~
                "https://github.com/jeffkreeftmeijer/updates/blob/master/2018-12-27-man-ed-currentstatus.md"
@@ -57,7 +57,7 @@ defmodule DolphinWeb.UpdateControllerTest do
       assert response = html_response(conn, 200)
       assert response =~ "Update posted succesfully"
 
-      [file] = FakeGithub.Contents.files()
+      [{_filename, file}] = FakeGithub.Contents.files()
 
       assert file =~ ~r/in_reply_to: https:\/\/mastodon.social\/web\/statuses\/101195085216392589/
 

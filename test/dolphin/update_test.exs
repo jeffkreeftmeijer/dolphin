@@ -32,14 +32,14 @@ defmodule Dolphin.UpdateTest do
     end
 
     test "adds the twitter URL to the github update" do
-      [file] = FakeGithub.Contents.files()
-      assert file =~ ~r/twitter: \["https:\/\/twitter.com\/\w+\/status\/12119"\]/
-      assert file =~ ~r/mastodon: \["https:\/\/mastodon.social\/@\w+\/12119"\]/
+      [{_filename, content}] = FakeGithub.Contents.files()
+      assert content =~ ~r/twitter: \["https:\/\/twitter.com\/\w+\/status\/12119"\]/
+      assert content =~ ~r/mastodon: \["https:\/\/mastodon.social\/@\w+\/12119"\]/
     end
 
     test "adds the current datetime to the github update" do
-      [file] = FakeGithub.Contents.files()
-      assert file =~ "date: 2018-12-27T15:46:23Z"
+      [{_filename, content}] = FakeGithub.Contents.files()
+      assert content =~ "date: 2018-12-27T15:46:23Z"
     end
   end
 
