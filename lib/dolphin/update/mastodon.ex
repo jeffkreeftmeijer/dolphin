@@ -82,7 +82,7 @@ defmodule Dolphin.Update.Mastodon do
 
   defp remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
     remove_media_image_tags(
-      String.replace(content, ~r/\s*!\[[^\]]*\]\(\/media\/#{filename}\)/, ""),
+      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{filename}\)/, ""),
       tail
     )
   end
