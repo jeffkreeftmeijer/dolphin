@@ -18,10 +18,10 @@ defmodule Dolphin.Update.Mastodon do
     from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
   end
 
-  defp from_update(%Update{in_reply_to: "/" <> path}, acc) do
+  defp from_update(%Update{in_reply_to: "/" <> path} = update, acc) do
     case Github.get_metadata(path, "mastodon") do
       {:ok, urls} ->
-        from_update(%Update{in_reply_to: List.last(urls)}, acc)
+        from_update(%{update | in_reply_to: List.last(urls)}, acc)
 
       {:error, _} ->
         {:error, :invalid_in_reply_to}

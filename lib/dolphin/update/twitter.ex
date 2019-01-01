@@ -10,10 +10,10 @@ defmodule Dolphin.Update.Twitter do
     from_update(update, %Dolphin.Update.Twitter{})
   end
 
-  defp from_update(%Update{in_reply_to: "/" <> path}, acc) do
+  defp from_update(%Update{in_reply_to: "/" <> path} = update, acc) do
     case Github.get_metadata(path, "twitter") do
       {:ok, urls} ->
-        from_update(%Update{in_reply_to: List.last(urls)}, acc)
+        from_update(%{update | in_reply_to: List.last(urls)}, acc)
 
       {:error, _} ->
         {:error, :invalid_in_reply_to}
