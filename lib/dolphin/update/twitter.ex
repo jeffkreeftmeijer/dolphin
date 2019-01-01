@@ -84,10 +84,8 @@ defmodule Dolphin.Update.Twitter do
 
   def post(%Dolphin.Update.Twitter{content: content, reply: reply, media: media} = update) do
     media_ids =
-      Enum.map(media, fn {item, description} ->
-        id = @twitter.upload_media(item.path, item.content_type)
-        @twitter.set_media_alt(id, description)
-        id
+      Enum.map(media, fn {item, _description} ->
+        @twitter.upload_media(item.path, item.content_type)
       end)
 
     %{id: id} = @twitter.update(content, post_options(%{update | media_ids: media_ids}))
