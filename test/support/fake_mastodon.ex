@@ -22,10 +22,10 @@ defmodule FakeMastodon do
     %{id: "#{id}", url: "https://mastodon.social/@jkreeftmeijer/#{id}"}
   end
 
-  def upload_media(_conn, path) do
+  def upload_media(_conn, path, description: description) do
     if Process.whereis(__MODULE__) do
       Agent.update(__MODULE__, fn %{uploads: uploads} = state ->
-        %{state | uploads: uploads ++ [path]}
+        %{state | uploads: uploads ++ [{path, description}]}
       end)
     end
 

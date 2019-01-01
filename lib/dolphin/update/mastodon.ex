@@ -83,8 +83,10 @@ defmodule Dolphin.Update.Mastodon do
 
   def post(%Dolphin.Update.Mastodon{content: content, reply: reply, media: media} = update) do
     media_ids =
-      Enum.map(media, fn item ->
-        %Hunter.Attachment{id: id} = @mastodon.upload_media(@conn, item.path)
+      Enum.map(media, fn {item, description} ->
+        %Hunter.Attachment{id: id} =
+          @mastodon.upload_media(@conn, item.path, description: description)
+
         id
       end)
 

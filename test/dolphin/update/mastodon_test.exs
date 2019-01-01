@@ -189,9 +189,9 @@ defmodule Dolphin.Update.MastodonTest do
         path: "test/file.jpg"
       }
 
-      Mastodon.post(%Mastodon{content: "", media: [upload]})
+      Mastodon.post(%Mastodon{content: "", media: [{upload, "A file."}]})
 
-      assert ["test/file.jpg"] = FakeMastodon.uploads()
+      assert [{"test/file.jpg", "A file."}] = FakeMastodon.uploads()
       assert [{"", [media_ids: ["9569296"]]}] = FakeMastodon.updates()
     end
   end
