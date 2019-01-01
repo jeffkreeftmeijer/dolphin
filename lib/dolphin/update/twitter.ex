@@ -51,9 +51,17 @@ defmodule Dolphin.Update.Twitter do
 
   defp from_splits([content | tail], media, update) do
     mentioned_images =
-      Enum.filter(media, fn upload ->
-        content =~ upload.filename
+      ~r/!\[([^\]]*)]\(([^\)]+)\)/
+      |> Regex.scan(content)
+      |> Enum.map(fn [_match, alt, filename] ->
+        upload =
+          Enum.find(media, fn item ->
+            "/media/" <> item.filename == filename
+          end)
+
+        {upload, alt}
       end)
+      |> Enum.reject(fn {upload, _description} -> upload == nil end)
 
     %{
       update
@@ -65,9 +73,9 @@ defmodule Dolphin.Update.Twitter do
 
   defp from_splits([], _media, _update), do: nil
 
-  defp remove_media_image_tags(content, [%{filename: filename} | tail]) do
+  defp remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
     remove_media_image_tags(
-      String.replace(content, ~r/\s*!\[[^\]]*\]\(\/media\/#{filename}\)/, ""),
+      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{filename}\)/, ""),
       tail
     )
   end

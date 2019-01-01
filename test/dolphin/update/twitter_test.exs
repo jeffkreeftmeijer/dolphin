@@ -100,8 +100,8 @@ defmodule Dolphin.Update.TwitterTest do
         path: "test/file.jpg"
       }
 
-      assert {:ok, %Twitter{media: [upload]}} =
-               Twitter.from_update(%Update{text: "![](file.jpg)", media: [upload]})
+      assert {:ok, %Twitter{media: [{upload, "A file."}]}} =
+               Twitter.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
     end
 
     test "removes Markdown image tags from the update" do
@@ -133,9 +133,9 @@ defmodule Dolphin.Update.TwitterTest do
           }
         ]
 
-      assert {:ok, %Twitter{media: [^upload_1], reply: %Twitter{media: [^upload_2]}}} =
+      assert {:ok, %Twitter{media: [{^upload_1, _}], reply: %Twitter{media: [{^upload_2, _}]}}} =
                Twitter.from_update(%Update{
-                 text: "![](file1.jpg)\n\n\n![](file2.jpg)",
+                 text: "![](/media/file1.jpg)\n\n\n![](/media/file2.jpg)",
                  media: uploads
                })
     end
