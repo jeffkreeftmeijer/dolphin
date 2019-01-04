@@ -49,6 +49,21 @@ defmodule Dolphin.UpdateTest do
     end
   end
 
+  describe "post/1, with an empty services list" do
+    setup do
+      FakeGithub.Contents.start_link()
+      {:ok, _} = Update.post(%Update{text: "$ man ed\n\n#currentstatus", services: []})
+    end
+
+    test "does not post to twitter", %{twitter: urls} do
+      assert urls == []
+    end
+
+    test "does not post to mastodon", %{mastodon: urls} do
+      assert urls == []
+    end
+  end
+
   describe "filename/1" do
     property "starts with today's date" do
       check all update <- update() do
