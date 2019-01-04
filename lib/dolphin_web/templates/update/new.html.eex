@@ -17,6 +17,12 @@
   <div id="filenames"></div>
 </p>
 
+<%= checkbox f, :twitter, name: "update[services][]", checked_value: "twitter", value: "twitter", hidden_input: false %>
+<%= label f, :twitter %>
+
+<%= checkbox f, :mastodon, name: "update[services][]", checked_value: "mastodon", value: "mastodon", hidden_input: false %>
+<%= label f, :mastodon %>
+
 <p style="display: flex; justify-content: space-between;">
   <%= submit "Preview", name: "preview" %>
   <%= submit "Post", name: "post" %>
