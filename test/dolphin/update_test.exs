@@ -10,6 +10,12 @@ defmodule Dolphin.UpdateTest do
                text: "$ man ed\n\n#currentstatus"
              }
     end
+
+    test "extracts services from form parameters" do
+      assert Update.from_params(%{"services" => ~w(twitter mastodon)}) == %Update{
+               services: ~w(twitter mastodon)
+             }
+    end
   end
 
   describe "post/1" do
