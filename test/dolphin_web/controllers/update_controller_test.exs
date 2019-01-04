@@ -82,5 +82,17 @@ defmodule DolphinWeb.UpdateControllerTest do
 
       [_, {"media/screenshot.png", _}] = FakeGithub.Contents.files()
     end
+
+    test "selects services to post to", %{conn: conn} do
+      conn =
+        post(conn, Routes.update_path(conn, :create),
+          update: %{text: "$ man ed\n\n#currentstatus", services: ["twitter"]}
+        )
+
+      assert response = html_response(conn, 200)
+
+      assert response =~ "twitter.com"
+      refute response =~ "mastodon.social"
+    end
   end
 end

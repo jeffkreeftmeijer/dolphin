@@ -1,5 +1,12 @@
 defmodule Dolphin.Update do
-  defstruct text: "", date: nil, in_reply_to: nil, twitter: nil, mastodon: nil, media: []
+  defstruct text: "",
+            date: nil,
+            in_reply_to: nil,
+            twitter: [],
+            mastodon: [],
+            media: [],
+            services: ["twitter", "mastodon"]
+
   alias Dolphin.{Update, Update.Github, Update.Twitter, Update.Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
@@ -12,26 +19,28 @@ defmodule Dolphin.Update do
     end)
   end
 
-  def post(%Update{} = update) do
-    twitter_links =
+  def post(%Update{services: ["twitter" | services]} = update) do
+    links =
       case Twitter.post(update) do
         {:ok, links} -> links
         _ -> []
       end
 
-    mastodon_links =
+    post(%{update | services: services, twitter: links})
+  end
+
+  def post(%Update{services: ["mastodon" | services]} = update) do
+    links =
       case Mastodon.post(update) do
         {:ok, links} -> links
         _ -> []
       end
 
-    {:ok, github_links} =
-      Github.post(%{
-        update
-        | twitter: twitter_links,
-          mastodon: mastodon_links,
-          date: @datetime.to_iso8601(@datetime.utc_now)
-      })
+    post(%{update | services: services, mastodon: links})
+  end
+
+  def post(%Update{twitter: twitter_links, mastodon: mastodon_links} = update) do
+    {:ok, github_links} = Github.post(%{update | date: @datetime.to_iso8601(@datetime.utc_now)})
 
     {:ok,
      %{

@@ -10,6 +10,12 @@ defmodule Dolphin.UpdateTest do
                text: "$ man ed\n\n#currentstatus"
              }
     end
+
+    test "extracts services from form parameters" do
+      assert Update.from_params(%{"services" => ~w(twitter mastodon)}) == %Update{
+               services: ~w(twitter mastodon)
+             }
+    end
   end
 
   describe "post/1" do
@@ -40,6 +46,21 @@ defmodule Dolphin.UpdateTest do
     test "adds the current datetime to the github update" do
       [{_filename, content}] = FakeGithub.Contents.files()
       assert content =~ "date: 2018-12-27T15:46:23Z"
+    end
+  end
+
+  describe "post/1, with an empty services list" do
+    setup do
+      FakeGithub.Contents.start_link()
+      {:ok, _} = Update.post(%Update{text: "$ man ed\n\n#currentstatus", services: []})
+    end
+
+    test "does not post to twitter", %{twitter: urls} do
+      assert urls == []
+    end
+
+    test "does not post to mastodon", %{mastodon: urls} do
+      assert urls == []
     end
   end
 

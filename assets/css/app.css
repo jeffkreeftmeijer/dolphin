@@ -4,7 +4,7 @@
 @import "./enough.media.css";
 @import "./enough.code.css";
 
-input, textarea{
+input[type="file"], input[type="text"], textarea{
   display: block;
 }
 
