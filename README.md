@@ -17,7 +17,7 @@ Dolphin is a microblogging tool that intelligently converts, splits and posts up
 
 By running it yourself. You’ll need to configure these environment variables to make everything work:
 
-    # Basic authentication
+    # Basic authentication (optional)
     BASIC_AUTH_USERNAME
     BASIC_AUTH_PASSWORD
 
@@ -26,13 +26,13 @@ By running it yourself. You’ll need to configure these environment variables t
     GITHUB_REPOSITORY
     GITHUB_ACCESS_TOKEN
 
-    # Twitter credentials
+    # Twitter credentials (optional)
     TWITTER_USERNAME
     TWITTER_CONSUMER_KEY
     TWITTER_CONSUMER_SECRET
     TWITTER_ACCESS_TOKEN
     TWITTER_TOKEN_SECRET
 
-    # Mastodon credentials
+    # Mastodon credentials (optional)
     MASTODON_BASE_URL
     MASTODON_BEARER_TOKEN
