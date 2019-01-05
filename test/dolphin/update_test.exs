@@ -3,6 +3,31 @@ defmodule Dolphin.UpdateTest do
   use ExUnitProperties
   doctest Dolphin.Update
   alias Dolphin.Update
+  import TestUtils
+
+  describe "services/0" do
+    setup do
+      FakeTwitter.start_link()
+      FakeMastodon.start_link()
+      :ok
+    end
+
+    test "returns all configured services" do
+      assert Update.services() == ~w(twitter mastodon)
+    end
+
+    test "it does not return twitter if it's not configured" do
+      without_configuration(:extwitter, :oauth, fn ->
+        assert Update.services() == ~w(mastodon)
+      end)
+    end
+
+    test "it does not return mastodon if it's not configured" do
+      without_configuration(:dolphin, :mastodon_credentials, fn ->
+        assert Update.services() == ~w(twitter)
+      end)
+    end
+  end
 
   describe "from_params/1" do
     test "creates an update from form parameters" do

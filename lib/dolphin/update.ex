@@ -13,7 +13,12 @@ defmodule Dolphin.Update do
   @datetime Application.get_env(:dolphin, :datetime, DateTime)
 
   def services do
-    ~w(twitter mastodon)
+    case {Twitter.configured?(), Mastodon.configured?()} do
+      {true, true} -> ~w(twitter mastodon)
+      {false, true} -> ~w(mastodon)
+      {true, false} -> ~w(twitter)
+      _ -> []
+    end
   end
 
   def from_params(update) do
