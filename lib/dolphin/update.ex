@@ -14,6 +14,8 @@ defmodule Dolphin.Update do
   @date Application.get_env(:dolphin, :date, Date)
   @datetime Application.get_env(:dolphin, :datetime, DateTime)
 
+  def services, do: @services
+
   def from_params(update) do
     update
     |> Enum.reduce(%Update{}, fn {key, value}, acc ->
