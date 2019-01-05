@@ -6,6 +6,23 @@ defmodule Dolphin.Update.Twitter do
   @credentials Application.get_env(:dolphin, :twitter_credentials)
   @username @credentials[:username]
 
+  def configured? do
+    :extwitter
+    |> Application.get_env(:oauth)
+    |> configured?
+  end
+
+  defp configured?([
+        {:consumer_key, _},
+        {:consumer_secret, _},
+        {:access_token, _},
+        {:access_token_secret, _}
+      ]) do
+    true
+  end
+
+  defp configured?(_), do: false
+
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Twitter{})
   end

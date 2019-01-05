@@ -11,6 +11,19 @@ defmodule Dolphin.Update.TwitterTest do
     :ok
   end
 
+  describe "configured?/0" do
+    test "is configured with an extwitter configuration" do
+      assert Twitter.configured?()
+    end
+
+    test "is not configured without an extwitter configuration" do
+      before = Application.get_env(:extwitter, :oauth)
+      Application.delete_env(:extwitter, :oauth)
+      refute Twitter.configured?()
+      Application.put_env(:extwitter, :oauth, before)
+    end
+  end
+
   describe "from_update/1" do
     test "creates a Twitter update from an Update" do
       assert Twitter.from_update(%Update{text: "$ man ed\n\n#currentstatus"}) ==
