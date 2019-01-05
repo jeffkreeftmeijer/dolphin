@@ -13,7 +13,11 @@ defmodule Dolphin.Update.Mastodon do
     |> configured?
   end
 
-  defp configured?([{:base_url, _}, {:bearer_token, _}]), do: true
+  defp configured?([{:base_url, base_url}, {:bearer_token, bearer_token}])
+       when is_binary(base_url) and is_binary(bearer_token) do
+    true
+  end
+
   defp configured?(_), do: false
 
   def from_update(%Update{} = update) do

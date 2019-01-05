@@ -13,11 +13,13 @@ defmodule Dolphin.Update.Twitter do
   end
 
   defp configured?([
-        {:consumer_key, _},
-        {:consumer_secret, _},
-        {:access_token, _},
-        {:access_token_secret, _}
-      ]) do
+         {:consumer_key, consumer_key},
+         {:consumer_secret, consumer_secret},
+         {:access_token, access_token},
+         {:access_token_secret, access_token_secret}
+       ])
+       when is_binary(consumer_key) and is_binary(consumer_secret) and is_binary(access_token) and
+              is_binary(access_token_secret) do
     true
   end
 
