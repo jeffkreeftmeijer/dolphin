@@ -2,6 +2,8 @@
 
 Dolphin is a microblogging tool that intelligently converts, splits and posts updates to Twitter, Mastodon and Github.
 
+![A screenshot of a web interface that can post updates to Twitter, Mastodon, and Github.](https://updates.jeffkreeftmeijer.com/media/Screenshot%202019-01-01%20at%2015.21.30.png)
+
 “Intelligently”, because:
 
 1. It splits long updates into threads, so longer updates are posted to Twitter and Mastodon.
