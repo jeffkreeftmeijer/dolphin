@@ -3,6 +3,19 @@ defmodule Dolphin.Update.MastodonTest do
   doctest Dolphin.Update.Mastodon
   alias Dolphin.{Update, Update.Mastodon}
 
+  describe "configured?/0" do
+    test "is configured with mastodon credentials" do
+      assert Mastodon.configured?()
+    end
+
+    test "is not configured without mastodon credentials" do
+      before = Application.get_env(:dolphin, :mastodon_credentials)
+      Application.delete_env(:dolphin, :mastodon_credentials)
+      refute Mastodon.configured?()
+      Application.put_env(:dolphin, :mastodon_credentials, before)
+    end
+  end
+
   describe "from_update/1" do
     test "creates a Mastodon update from an Update" do
       assert Mastodon.from_update(%Update{text: "$ man ed\n\n#currentstatus"}) ==

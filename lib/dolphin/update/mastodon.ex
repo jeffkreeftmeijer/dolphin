@@ -7,6 +7,15 @@ defmodule Dolphin.Update.Mastodon do
   @base_url @credentials[:base_url]
   @conn Hunter.new(@credentials)
 
+  def configured? do
+    :dolphin
+    |> Application.get_env(:mastodon_credentials)
+    |> configured?
+  end
+
+  defp configured?([{:base_url, _}, {:bearer_token, _}]), do: true
+  defp configured?(_), do: false
+
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Mastodon{})
   end
