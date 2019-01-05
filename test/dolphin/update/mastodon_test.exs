@@ -2,6 +2,19 @@ defmodule Dolphin.Update.MastodonTest do
   use ExUnit.Case, async: true
   doctest Dolphin.Update.Mastodon
   alias Dolphin.{Update, Update.Mastodon}
+  import TestUtils
+
+  describe "configured?/0" do
+    test "is configured with mastodon credentials" do
+      assert Mastodon.configured?()
+    end
+
+    test "is not configured without mastodon credentials" do
+      without_configuration(:dolphin, :mastodon_credentials, fn ->
+        refute Mastodon.configured?()
+      end)
+    end
+  end
 
   describe "from_update/1" do
     test "creates a Mastodon update from an Update" do

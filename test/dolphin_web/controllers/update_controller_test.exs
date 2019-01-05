@@ -29,7 +29,7 @@ defmodule DolphinWeb.UpdateControllerTest do
     test "displays the URLs the update has been posted to", %{conn: conn} do
       conn =
         post(conn, Routes.update_path(conn, :create),
-          update: %{text: "$ man ed\n\n#currentstatus"}
+          update: %{text: "$ man ed\n\n#currentstatus", services: ~w(twitter)}
         )
 
       assert response = html_response(conn, 200)

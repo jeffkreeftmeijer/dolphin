@@ -7,15 +7,30 @@ defmodule Dolphin.Update.Mastodon do
   @base_url @credentials[:base_url]
   @conn Hunter.new(@credentials)
 
+  def configured? do
+    :dolphin
+    |> Application.get_env(:mastodon_credentials)
+    |> configured?
+  end
+
+  defp configured?([{:base_url, base_url}, {:bearer_token, bearer_token}])
+       when is_binary(base_url) and is_binary(bearer_token) do
+    true
+  end
+
+  defp configured?(_), do: false
+
   def from_update(%Update{} = update) do
     from_update(update, %Dolphin.Update.Mastodon{})
   end
 
-  defp from_update(
-         %Update{in_reply_to: "#{@base_url}/web/statuses/" <> in_reply_to_id} = update,
-         acc
-       ) do
-    from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+  if @base_url do
+    defp from_update(
+           %Update{in_reply_to: "#{@base_url}/web/statuses/" <> in_reply_to_id} = update,
+           acc
+         ) do
+      from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+    end
   end
 
   defp from_update(%Update{in_reply_to: "/" <> path} = update, acc) do

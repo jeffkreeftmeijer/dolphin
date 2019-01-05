@@ -2,6 +2,7 @@ defmodule Dolphin.Update.TwitterTest do
   use ExUnit.Case, async: true
   doctest Dolphin.Update.Twitter
   alias Dolphin.{Update, Update.Twitter}
+  import TestUtils
 
   @credentials Application.get_env(:dolphin, :twitter_credentials)
   @username @credentials[:username]
@@ -9,6 +10,18 @@ defmodule Dolphin.Update.TwitterTest do
   setup do
     FakeTwitter.start_link()
     :ok
+  end
+
+  describe "configured?/0" do
+    test "is configured with an extwitter configuration" do
+      assert Twitter.configured?()
+    end
+
+    test "is not configured without an extwitter configuration" do
+      without_configuration(:extwitter, :oauth, fn ->
+        refute Twitter.configured?()
+      end)
+    end
   end
 
   describe "from_update/1" do

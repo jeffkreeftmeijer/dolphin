@@ -5,12 +5,21 @@ defmodule Dolphin.Update do
             twitter: [],
             mastodon: [],
             media: [],
-            services: ["twitter", "mastodon"]
+            services: []
 
   alias Dolphin.{Update, Update.Github, Update.Twitter, Update.Mastodon}
 
   @date Application.get_env(:dolphin, :date, Date)
   @datetime Application.get_env(:dolphin, :datetime, DateTime)
+
+  def services do
+    case {Twitter.configured?(), Mastodon.configured?()} do
+      {true, true} -> ~w(twitter mastodon)
+      {false, true} -> ~w(mastodon)
+      {true, false} -> ~w(twitter)
+      _ -> []
+    end
+  end
 
   def from_params(update) do
     update

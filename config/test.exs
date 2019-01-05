@@ -21,4 +21,12 @@ config :dolphin, :github_credentials,
 
 config :dolphin, :twitter_credentials, username: "jkreeftmeijer"
 
-config :dolphin, :mastodon_credentials, base_url: "https://mastodon.social"
+config :extwitter, :oauth,
+  consumer_key: "consumer_key",
+  consumer_secret: "consumer_secret",
+  access_token: "consumer_token",
+  access_token_secret: "consumer_token_secret"
+
+config :dolphin, :mastodon_credentials,
+  base_url: "https://mastodon.social",
+  bearer_token: "bearer_token"
