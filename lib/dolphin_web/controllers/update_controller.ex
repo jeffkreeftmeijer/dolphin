@@ -12,15 +12,27 @@ defmodule DolphinWeb.UpdateController do
     github = Dolphin.Update.Github.from_update(update)
 
     twitter =
-      case Dolphin.Update.Twitter.from_update(update) do
-        {:ok, update} -> update
-        _ -> nil
+      case Enum.member?(Update.services(), "twitter") do
+        true ->
+          case Dolphin.Update.Twitter.from_update(update) do
+            {:ok, update} -> update
+            _ -> nil
+          end
+
+        false ->
+          nil
       end
 
     mastodon =
-      case Dolphin.Update.Mastodon.from_update(update) do
-        {:ok, update} -> update
-        _ -> nil
+      case Enum.member?(Update.services(), "mastodon") do
+        true ->
+          case Dolphin.Update.Mastodon.from_update(update) do
+            {:ok, update} -> update
+            _ -> nil
+          end
+
+        false ->
+          nil
       end
 
     render(conn, "preview.html", github: github, twitter: twitter, mastodon: mastodon)
