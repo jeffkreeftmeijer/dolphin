@@ -2,8 +2,16 @@ defmodule DolphinWeb.Router do
   use DolphinWeb, :router
 
   pipeline :browser do
-    unless Mix.env() == :test do
-      plug BasicAuth, use_config: {:dolphin, :basic_auth}
+    case {Mix.env(), Application.get_env(:dolphin, :basic_auth)} do
+      {:test, _} ->
+        :ok
+
+      {_, [{:username, username}, {:password, password}]}
+      when is_binary(username) and is_binary(password) ->
+        plug BasicAuth, use_config: {:dolphin, :basic_auth}
+
+      _ ->
+        :ok
     end
 
     plug :accepts, ["html"]
