@@ -1,11 +1,13 @@
 defmodule Dolphin.Update do
+  @services ~w(twitter mastodon)
+
   defstruct text: "",
             date: nil,
             in_reply_to: nil,
             twitter: [],
             mastodon: [],
             media: [],
-            services: ["twitter", "mastodon"]
+            services: @services
 
   alias Dolphin.{Update, Update.Github, Update.Twitter, Update.Mastodon}
 
