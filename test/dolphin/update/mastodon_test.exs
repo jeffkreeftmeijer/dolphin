@@ -2,6 +2,7 @@ defmodule Dolphin.Update.MastodonTest do
   use ExUnit.Case, async: true
   doctest Dolphin.Update.Mastodon
   alias Dolphin.{Update, Update.Mastodon}
+  import TestUtils
 
   describe "configured?/0" do
     test "is configured with mastodon credentials" do
@@ -9,10 +10,9 @@ defmodule Dolphin.Update.MastodonTest do
     end
 
     test "is not configured without mastodon credentials" do
-      before = Application.get_env(:dolphin, :mastodon_credentials)
-      Application.delete_env(:dolphin, :mastodon_credentials)
-      refute Mastodon.configured?()
-      Application.put_env(:dolphin, :mastodon_credentials, before)
+      without_configuration(:dolphin, :mastodon_credentials, fn ->
+        refute Mastodon.configured?()
+      end)
     end
   end
 
