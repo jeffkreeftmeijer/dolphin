@@ -20,11 +20,13 @@ defmodule Dolphin.Update.Mastodon do
     from_update(update, %Dolphin.Update.Mastodon{})
   end
 
-  defp from_update(
-         %Update{in_reply_to: "#{@base_url}/web/statuses/" <> in_reply_to_id} = update,
-         acc
-       ) do
-    from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+  if @base_url do
+    defp from_update(
+           %Update{in_reply_to: "#{@base_url}/web/statuses/" <> in_reply_to_id} = update,
+           acc
+         ) do
+      from_update(Map.drop(update, [:in_reply_to]), %{acc | in_reply_to_id: in_reply_to_id})
+    end
   end
 
   defp from_update(%Update{in_reply_to: "/" <> path} = update, acc) do
