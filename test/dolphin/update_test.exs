@@ -21,7 +21,9 @@ defmodule Dolphin.UpdateTest do
   describe "post/1" do
     setup do
       FakeGithub.Contents.start_link()
-      {:ok, _} = Update.post(%Update{text: "$ man ed\n\n#currentstatus"})
+
+      {:ok, _} =
+        Update.post(%Update{text: "$ man ed\n\n#currentstatus", services: ~w(twitter mastodon)})
     end
 
     test "posts the update to github", %{github: [url]} do
