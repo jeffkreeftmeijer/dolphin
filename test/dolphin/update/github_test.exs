@@ -23,6 +23,14 @@ defmodule Dolphin.Update.GithubTest do
                }
     end
 
+    test "removes carriage returns from update texts" do
+      %Github{content: content} =
+        %Update{text: "$ man ed\r\n\r\n#currentstatus"}
+        |> Github.from_update()
+
+      refute String.contains?(content, "\r")
+    end
+
     test "creates a Github reply from an Update" do
       assert Github.from_update(%Update{
                text:

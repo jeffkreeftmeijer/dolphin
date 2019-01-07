@@ -11,9 +11,14 @@ defmodule Dolphin.Update.Github do
   def from_update(%Update{text: text} = update) do
     metadata = Update.metadata(update)
 
+    content =
+      text
+      |> String.replace("\r", "")
+      |> FrontMatter.encode!(metadata)
+
     %Dolphin.Update.Github{
       filename: Update.filename(update),
-      content: FrontMatter.encode!(text, metadata),
+      content: content,
       media: update.media
     }
   end
