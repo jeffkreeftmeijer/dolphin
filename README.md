@@ -1,5 +1,7 @@
 # Dolphin 🐬 
 
+> “kekkekekeke or whatever sound dolphins make” — [Robert Beekman](https://github.com/matsimitsu)
+
 Dolphin is a microblogging tool that intelligently converts, splits and posts updates to Twitter, Mastodon and Github.
 
 ![A screenshot of a web interface that can post updates to Twitter, Mastodon, and Github.](https://updates.jeffkreeftmeijer.com/media/Screenshot%202019-01-01%20at%2015.21.30.png)
