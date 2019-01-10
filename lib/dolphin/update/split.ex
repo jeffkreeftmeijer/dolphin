@@ -18,6 +18,7 @@ defmodule Dolphin.Update.Split do
 
     if joined
        |> shorten_urls
+       |> remove_local_images
        |> String.length() <= max do
       join!(tail, max, [joined | rest])
     else
@@ -33,5 +34,9 @@ defmodule Dolphin.Update.Split do
 
   defp shorten_urls(text) do
     Regex.replace(~r/https?:\/\/[\w\.\/-]+/, text, &String.slice(&1, 0..22))
+  end
+
+  defp remove_local_images(text) do
+    Regex.replace(~r/!\[[^\]]*]\(\/[^\)]+\)\s*/, text, "")
   end
 end

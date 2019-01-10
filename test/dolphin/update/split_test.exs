@@ -55,4 +55,10 @@ defmodule Dolphin.Update.SplitTest do
 
     assert [text] = Split.split(text, 40)
   end
+
+  test "does not count local image tags" do
+    text = "![An image](/media/file.jpg)\n\n#currentstatus"
+
+    assert [text] = Split.split(text, 14)
+  end
 end
