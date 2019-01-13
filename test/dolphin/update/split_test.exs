@@ -61,4 +61,14 @@ defmodule Dolphin.Update.SplitTest do
 
     assert [text] = Split.split(text, 14)
   end
+
+  test "duplicates mentions across splits" do
+    text = """
+    @jvanbaarsen Contexts provide the API to interact with your schemas to keep knowledge about your repository out of the rest of your app.
+
+    While they can group functions for multiple schemas together (like in the Accounts example), you’re encouraged to start with one context per schema if it’s not immediately clear what the groups could be.
+    """
+
+    assert ["@jvanbaarsen Contexts" <> _, "@jvanbaarsen While" <> _] = Split.split(text, 280)
+  end
 end
