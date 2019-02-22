@@ -38,3 +38,10 @@ By running it yourself. You’ll need to configure these environment variables t
     # Mastodon credentials (optional)
     MASTODON_BASE_URL
     MASTODON_BEARER_TOKEN
+
+Then, make sure to [have Elixir installed](https://elixir-lang.org/install.html), get Dolphin's dependencies, and start the server.
+
+``` elixir
+$ mix deps.get
+$ mix phx.server
+```
