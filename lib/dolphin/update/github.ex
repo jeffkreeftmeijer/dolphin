@@ -35,7 +35,7 @@ defmodule Dolphin.Update.Github do
   end
 
   defp do_post(filename, content) do
-    body = %{"content" => Base.encode64(content), message: "Add " <> filename}
+    body = %{"content" => Base.encode64(content), message: "Add " <> filename, branch: "main"}
 
     {201, %{"content" => %{"_links" => %{"html" => link}}}, _response} =
       Module.concat(@github, Contents).create(@client, @username, @repository, filename, body)
