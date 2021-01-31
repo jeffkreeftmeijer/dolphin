@@ -104,6 +104,20 @@ defmodule Dolphin.Update.MastodonTest do
                Mastodon.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
     end
 
+    test "adds urlencoded media to the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "a file.jpg",
+        path: "test/a file.jpg"
+      }
+
+      assert {:ok, %Mastodon{media: [{upload, "A file."}]}} =
+               Mastodon.from_update(%Update{
+                 text: "![A file.](/media/a%20file.jpg)",
+                 media: [upload]
+               })
+    end
+
     test "removes Markdown image tags from the update" do
       upload = %Plug.Upload{
         content_type: "image/jpeg",
@@ -114,6 +128,20 @@ defmodule Dolphin.Update.MastodonTest do
       assert {:ok, %Mastodon{content: "Image.\n\nThat’s all!"}} =
                Mastodon.from_update(%Update{
                  text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+                 media: [upload]
+               })
+    end
+
+    test "removes urlencoded Markdown image tags from the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "a file.jpg",
+        path: "test/a file.jpg"
+      }
+
+      assert {:ok, %Mastodon{content: "Image.\n\nThat’s all!"}} =
+               Mastodon.from_update(%Update{
+                 text: "Image.\n\n![A file.](/media/a%20file.jpg)\n\nThat’s all!",
                  media: [upload]
                })
     end
