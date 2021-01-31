@@ -35,7 +35,7 @@
 
     for(i = 0; i < this.files.length; i++) {
       let element = document.createElement('li')
-      element.innerText = '![](/media/' + this.files[i].name + ')'
+      element.innerText = '![](/media/' + encodeURIComponent(this.files[i].name) + ')'
       list.appendChild(element)
     }
 
