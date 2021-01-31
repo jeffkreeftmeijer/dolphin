@@ -75,7 +75,7 @@ defmodule Dolphin.Update.Twitter do
       |> Enum.map(fn [_match, alt, filename] ->
         upload =
           Enum.find(media, fn item ->
-            "/media/" <> item.filename == filename
+            "/media/" <> item.filename == URI.decode(filename)
           end)
 
         {upload, alt}

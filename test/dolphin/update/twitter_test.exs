@@ -117,6 +117,20 @@ defmodule Dolphin.Update.TwitterTest do
                Twitter.from_update(%Update{text: "![A file.](/media/file.jpg)", media: [upload]})
     end
 
+    test "adds urlencoded media to the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "a file.jpg",
+        path: "test/a file.jpg"
+      }
+
+      assert {:ok, %Twitter{media: [{upload, "A file."}]}} =
+               Twitter.from_update(%Update{
+                 text: "![A file.](/media/a%20file.jpg)",
+                 media: [upload]
+               })
+    end
+
     test "removes Markdown image tags from the update" do
       upload = %Plug.Upload{
         content_type: "image/jpeg",
@@ -127,6 +141,20 @@ defmodule Dolphin.Update.TwitterTest do
       assert {:ok, %Twitter{content: "Image.\n\nThat’s all!"}} =
                Twitter.from_update(%Update{
                  text: "Image.\n\n![A file.](/media/file.jpg)\n\nThat’s all!",
+                 media: [upload]
+               })
+    end
+
+    test "removes urlencoded Markdown image tags from the update" do
+      upload = %Plug.Upload{
+        content_type: "image/jpeg",
+        filename: "a file.jpg",
+        path: "test/a file.jpg"
+      }
+
+      assert {:ok, %Twitter{content: "Image.\n\nThat’s all!"}} =
+               Twitter.from_update(%Update{
+                 text: "Image.\n\n![A file.](/media/a%20file.jpg)\n\nThat’s all!",
                  media: [upload]
                })
     end

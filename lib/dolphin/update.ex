@@ -156,7 +156,7 @@ defmodule Dolphin.Update do
   """
   def remove_media_image_tags(content, [{%{filename: filename}, alt} | tail]) do
     remove_media_image_tags(
-      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{filename}\)/, ""),
+      String.replace(content, ~r/\s*!\[#{alt}\]\(\/media\/#{URI.encode(filename)}\)/, ""),
       tail
     )
   end
